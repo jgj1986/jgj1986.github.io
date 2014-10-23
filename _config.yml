@@ -6,18 +6,18 @@ excerpt_separator: "\n\n\n\n"
 
 
 ### self params
-site_name: kissdata
-site_description: keep it simple &#38; stupied by data | 爱小牛牛，爱生活
-url: http://blog.kissdata.com
-author: vincentzhwg
-author_github_url: https://github.com/vincentzhwg
-author_email: vincentzhwg@gmail.com
+site_name: ljsy
+site_description: ljsy
+url: http://jgj1986.github.io
+author: jgj
+author_github_url: https://github.com/jgj1986
+author_email: jingj1986@gmail.com
 
 ## if you don't want something below, just comment it or delete it. But if you want to use, please change your ids.
-duoshuo_short_name: kissdata
+#duoshuo_short_name: kissdata
 #disqus_shortname: kissdata
 #google_analytics_ua: UA-52060953-1
-cnzz_id: 1253396463
+#cnzz_id: 1253396463
 #kp747_id: 017020a090e0e3d7     ##    http://www.kp747.com
 
 
