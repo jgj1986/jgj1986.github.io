@@ -31,39 +31,8 @@ defaults:
         values:
             layout: "page"
             comments: "true"
-    - 
+    -
         scope:
-            path: "lua"
+            path: "test"
         values:
-            category: "lua"
-    - 
-        scope:
-            path: "life"
-        values:
-            category: "life"
-    - 
-        scope:
-            path: "linux"
-        values:
-            category: "linux"
-    - 
-        scope:
-            path: "java"
-        values:
-            category: "java"
-    - 
-        scope:
-            path: "python"
-        values:
-            category: "python"
-    - 
-        scope:
-            path: "bigdata"
-        values:
-            category: "bigdata"
-    - 
-        scope:
-            path: "dada"
-        values:
-            category: "小牛牛的happiness"
-
+            category: "test"
