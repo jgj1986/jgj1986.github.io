@@ -1,4 +1,5 @@
-### jekyll params
+#
+## jekyll params
 permalink: /:year/:month/:day/:title.html
 paginate: 8
 timezone: Asia/Shanghai
@@ -6,8 +7,8 @@ excerpt_separator: "\n\n\n\n"
 
 
 ### self params
-site_name: ljsy
-site_description: ljsy
+site_name: 我是疯子
+site_description: 我是疯子，我怕谁
 url: http://jgj1986.github.io
 author: jgj
 author_github_url: https://github.com/jgj1986
@@ -33,6 +34,6 @@ defaults:
             comments: "true"
     -
         scope:
-            path: "test"
+            path: "daily"
         values:
-            category: "test"
+            category: "生活随记"
