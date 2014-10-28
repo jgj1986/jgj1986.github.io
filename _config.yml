@@ -37,3 +37,9 @@ defaults:
             path: "daily"
         values:
             category: "生活随记"
+            
+    -
+        scope:
+            path: "bigdata"
+        values:
+            category: "bigdata"
