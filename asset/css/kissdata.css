@@ -6,6 +6,8 @@ pre {
     border-top-color: #C9C9AD
 }
 
+
+
 .back-to {
     bottom: 35px;
     overflow: hidden;
@@ -87,6 +89,10 @@ span#site_description {
 .post-card, .cat-card {
     border: 1px solid #6F6F91;
     border-left-width: 6px;
+}
+.post-card ul#markdown-toc {
+    display: none;
+    height: 0;
 }
 
 .cat-card {

@@ -6,6 +6,9 @@ tags: bigdta
 - b
 ---
 
+* toc
+{:toc}
+
 ## mongodb 集群 安装
 
 ### 说明
