@@ -12,11 +12,12 @@ tags: bigdta
 ## mongodb 集群 安装
 
 ### 说明
-**使用机器**   
+> 使用机器  
 192.168.1.159  
 192.168.1.171  
-192.168.1.189  
-**准备工作**  
+192.168.1.189   
+
+准备工作
 1、下载文件 
 
     $ wget http://downloads.mongodb.org/linux/mongodb-linux-x86_64-2.6.5.tgz  
@@ -32,12 +33,15 @@ tags: bigdta
 考虑到操作的简单，演示中操作尽可能的时候配置文件实现      
 
 
+***
+
+
 
 ### replica set  
-
-192.168.159:27017  -  master  
-192.168.171:27017  -  slaver  
-192.168.189:27017  -  arbiter  
+> 
+master: 192.168.159:27017  
+slaver:  192.168.171:27017   
+arbiter: 192.168.189:27017  
    
 **master (192.168.1.159)**  
 
@@ -173,7 +177,7 @@ tags: bigdta
 
 重启159上的mongdb，则159又为primary节点。  
   
-参考博客： http://blog.csdn.net/luonanqin/article/details/8497860  
+参考博客, [Mongodb集群搭建的三种方式](http://blog.csdn.net/luonanqin/article/details/8497860){:target="_blank"}   
 
 **问题：**  
 使用上面的执行过程，在服务启动的时候，有个提示：  
@@ -181,18 +185,19 @@ tags: bigdta
 --noprealloc  
 Disables the preallocation of data files. This shortens the start up time in some cases and can cause significant performance penalties during normal operations.  
 
+***
+
 
 ### sharding
-参考：  
-集群搭建: http://www.cnblogs.com/magialmoon/archive/2013/04/10/3013121.html   
-sharding: http://www.cnblogs.com/magialmoon/archive/2013/04/11/3015394.html   
-性能与优化: http://www.cnblogs.com/magialmoon/archive/2013/04/12/3017387.html   
+> 参考： [集群搭建](http://www.cnblogs.com/magialmoon/archive/2013/04/10/3013121.html){:target="_blank"}，
+[sharding](http://www.cnblogs.com/magialmoon/archive/2013/04/11/3015394.html){:target="_bland"}，
+[性能与优化](http://www.cnblogs.com/magialmoon/archive/2013/04/12/3017387.html){:target="_bland"}   
   
-路由节点 Query Routers:   
+* 路由节点 Query Routers:   
             192.168.1.159:27017   
-配置节点 Config servers:   
+* 配置节点 Config servers:   
             192.168.1.159:20001  192.168.1.171:20001  
-数据节点 shards:     
+* 数据节点 shards:     
             192.168.1.159:20002   192.168.1.171:20002   192.168.1.189:20002  
 补充，官网上说明：The shard can be either a replica set or a standalone mongod instance  
 
@@ -297,6 +302,6 @@ sharding: http://www.cnblogs.com/magialmoon/archive/2013/04/11/3015394.html
 
 **数据库使用shard**   
 
-    > use admin  
+    > use admin    
     > db.runCommand({"enablesharding":"dbname1"})  
 

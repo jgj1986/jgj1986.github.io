@@ -43,3 +43,9 @@ defaults:
             path: "bigdata"
         values:
             category: "bigdata"
+
+    -
+        scope:
+            path: "web"
+        values:
+            category: "web"
