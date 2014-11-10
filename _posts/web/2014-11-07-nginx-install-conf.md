@@ -13,7 +13,7 @@ tags: web
 > [nginx](http://nginx.org/){:"target"="_blank"}也火了很久了，最近因为实际的需求，要使用nginx，也就好好的了解下。  
 
 
-#安装  
+##安装  
 
 总的来说，安装还是比较简单的  
 
@@ -54,9 +54,9 @@ tags: web
 
 这个地方还有一个遗漏处，就是修改配置文件，甚至是线上的一些lua代码，都需要重启nginx服务才能生效，这样不是我们所想要的，至少修改源代码可以不重启就生效。可能是配置的问题，再好好研究下。  
 
-#配置  
+##配置  
 
-##配置文件说明    
+###配置文件说明    
 
 刚安装好的服务也会提供一份简单的配置文件，nginx.conf。此处先记录下对配置文件的一些认识：  
 
@@ -71,7 +71,7 @@ tags: web
 官网[wiki](http://wiki.nginx.org/Configuration){:"target"="_blank"}上有更加详细的说明。  
 
 
-##与lua结合 
+###与lua结合 
 
 先提供一个简单配置:  
 
@@ -118,7 +118,7 @@ tags: web
 第一个是用lua文件中代码做初始化，第二个是设置一个变量。这个两处设置都是设置为全局的变量，常驻内存，可在lua代码中直接使用 :) 。  
 
 
-##nginx负载均衡
+###nginx负载均衡
 
 此处提供个简单配置例子：  
 
@@ -143,7 +143,7 @@ tags: web
   
 陈明乾在其博客 [Nginx 反向代理、负载均衡、页面缓存、URL重写及读写分离详解](){:"target":"_blank"}中以实践的形式给出的详细的说明，解释。可多看几次  
     
-##nginx备份   
+###nginx备份   
 nginx和Keepalive可以实现双机热备份，现在还都是在测试环境下，还没有做实践，先记录着，以后配置时有什么问题再记录。查阅到两篇博客
 [nginx+keepalived实现双机热备的高可用](https://www.centos.bz/2012/02/nginx-keepalived-high-availability/){:target="_blank"}，
 [nginx主主集群](http://www.2cto.com/os/201109/106387.html){:target="_blank"} 。

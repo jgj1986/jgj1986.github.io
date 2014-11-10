@@ -49,3 +49,9 @@ defaults:
             path: "web"
         values:
             category: "web"
+            
+    -
+        scope:
+            path: "database"
+        values:
+            category: "database"
