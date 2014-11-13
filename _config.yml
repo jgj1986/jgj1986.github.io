@@ -55,3 +55,9 @@ defaults:
             path: "database"
         values:
             category: "database"
+            
+    -
+        scope:
+            path: "linux"
+        values:
+            category: "linux"
