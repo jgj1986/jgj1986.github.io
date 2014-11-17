@@ -1,0 +1,31 @@
+---
+title:  Linux使用过程中的问题汇总
+date: 2014-11-16 16:12:28 +0800
+tags: linux 
+- a
+- b
+---
+
+* toc 
+{:toc}
+
+
+
+##md5
+
+使用md5sum命令得到的md5，和用md5.lua得到的md5值不一样，如下：
+
+    $ echo "hello" | md5sum
+    b1946ac92492d2347c6235b4d2611184  -
+    
+使用md5.lua进行测试
+
+    $ lua
+    Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio
+    > print(require("md5").sumhexa("hello"))
+    5d41402abc4b2a76b9719d911017c592    
+
+这就比较奇怪了，md5加密的算法应该是为唯一的，怎么还会不一样呢？经过搜素，原来是echo中的回车导致的：
+
+    $ echo -n "hello" | md5sum
+    5d41402abc4b2a76b9719d911017c592  -
