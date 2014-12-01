@@ -1,5 +1,5 @@
 ---
-title: lua-ngx操作mysql
+title: lua-ngx操作MySQL
 date: 2014-11-28 11:12:28 +0800
 tags: web
 - a
@@ -9,9 +9,9 @@ tags: web
 * toc 
 {:toc}
 
-> 本文是参考 [openresty对mysql的操作文档](https://github.com/openresty/lua-resty-mysql){:target=:"_blank"}，对mysql做添加、查询操作，因业务的需要，使用mysql的事务操作，并做测试，可以很好的支持。
+> 本文是参考 [openresty对MySQL的操作文档](https://github.com/openresty/lua-resty-mysql){:target=:"_blank"}，对mysql做添加、查询操作，因业务的需要，使用MySQL的事务操作，并做测试，可以很好的支持。
 
-###mysql查询操作
+###MySQL查询操作
 
 clone下来lua-resty-mysql的仓库 `https://github.com/openresty/lua-resty-mysql.git`，在nginx配置中lua路径中包含mysql.lua；或者将mysql.lua放在统一的路径下。可参考文冠的博客[nginx与lua安装教程](http://blog.kissdata.com/2014/11/14/nginx-lua-install.html){:target="_blank"}。
 在实际操作时，发现很多的查询都具有相同的特性，于是封装了一个函数，放在nginx的初始化文件中，如下：
@@ -59,7 +59,7 @@ clone下来lua-resty-mysql的仓库 `https://github.com/openresty/lua-resty-mysq
 因为[github](https://github.com/openresty/lua-resty-mysql){:target=:"_blank"}上已经有比较详细的介绍，此过程中用户的函数或方法就不在做过多的介绍。
 
 
-###mysql的事务操作
+###MySQL的事务操作
 
 项目中有这样的需求：用户请求更新自己应用的某个key值，且更新这个应用的版本号，这个过程要保证更新的原子性。如此计划采用[mysql的事务操作](http://dev.mysql.com/doc/refman/5.0/en/commit.html){:target="_blank"}。
 
@@ -83,9 +83,9 @@ clone下来lua-resty-mysql的仓库 `https://github.com/openresty/lua-resty-mysq
 
 ###编码问题
 
-如果mysql中存有汉字，查询时会有乱码，操作网上的讨论 [issues-20](https://github.com/openresty/lua-resty-mysql/issues/20){:target="_blank"}，将mysql服务端的编码改为utf-8。
+如果MySQL中存有汉字，查询时会有乱码，操作网上的讨论 [issues-20](https://github.com/openresty/lua-resty-mysql/issues/20){:target="_blank"}，将MySQL服务端的编码改为utf-8。
 
-    $ cat mysql.conf
+    $ cat my.conf
     [mysqld]
     skip-character-set-client-handshake
     collation-server=utf8_unicode_ci
