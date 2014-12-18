@@ -166,4 +166,15 @@ x: turn off X forwarding if it is on by default.
 ###bzip2 -d文件失败的修复
 
     bzip2recover file.bz2
-    bzip2 -d rec*.bz2 > file    
+    bzip2 -d rec*.bz2 > file   
+
+###grep两个关键字做去重
+
+想要实现功能
+* file_name中包含InitGame 或UserLogin的行
+* 这些行中取equdid(设备id)、channel(渠道号)这两个的内容
+* 对这两个内容，做去重求和
+
+    grep  -E "InitGame|UserLogin" file_name | grep -o -E "equdid=[^:]*|channel=[^:]*" | awk '{if(NR%2==0){print $0}else{printf "%s:",$0}}' | sort | uniq | wc -l
+    
+说明，`grep -o -E` 可以得到两个关键字的内容，但是输出到两行中，于是用awk在一行中输出。上面的 `print $0`（而不是用printf）就换行。
