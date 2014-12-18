@@ -148,13 +148,12 @@ x: turn off X forwarding if it is on by default.
     
 ###awk 几个例子
 
-   awk '{a[$1]+=$2;}END{for(i in a){if(a[i]>8){print i" "a[i];}}}' aa
-
-   cat */result_201* | awk -F' ' '{tmp=$1; $1="";gsub(/ /, "-"); val[$0]+=tmp}END{for(i in val) {print val[i]" "i};}' | sort -n -r > total 
+    awk '{a[$1]+=$2;}END{for(i in a){if(a[i]>8){print i" "a[i];}}}' aa
+    cat */result_201* | awk -F' ' '{tmp=$1; $1="";gsub(/ /, "-"); val[$0]+=tmp}END{for(i in val) {print val[i]" "i};}' | sort -n -r > total 
 
 多个文件中包含设备类型及个数，合并求和 (大写转为小写)
 
-   cat *_201406 | tr "[:upper:]" "[:lower:]" | awk '{names[$2]+=$1} END {for (i in names) {print names[i] " " i} }'
+    cat *_201406 | tr "[:upper:]" "[:lower:]" | awk '{names[$2]+=$1} END {for (i in names) {print names[i] " " i} }'
 
 ###grep 非ascii
 
