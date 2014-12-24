@@ -15,7 +15,7 @@ tags: go
 
 ###操作mysql
 
-[go-sql-driver/mysql Example]https://github.com/go-sql-driver/mysql/wiki/Examples 上提供了用go操作mysql的两个例子。
+[go-sql-driver/mysql Example](https://github.com/go-sql-driver/mysql/wiki/Examples){:target="_blank"} 上提供了用go操作mysql的两个例子。
 例子中关于查询，一个是一次只取一个结果，一个是一次去多个结果，而且使用了prepare的方法，防止sql注入攻击。  
 此文中是参考上面例子，做的测试。
 
