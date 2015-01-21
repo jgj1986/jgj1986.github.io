@@ -184,3 +184,24 @@ x: turn off X forwarding if it is on by default.
     then  # in new line
         echo "find bash in test.sh"
     fi
+
+### 控制字符
+
+    Ctl-B  光标后退,这应该依赖于bash输入的风格
+    Ctl-H  backspace,删除光标前边的字符
+    Ctl-I  就是tab键
+    Ctl-J  新行
+    Ctl-L  clear,清屏
+    Ctl-M  回车
+    Ctl-Q  继续(等价于XON字符),这个继续的标准输入在一个终端里
+    Ctl-S  挂起(等价于XOFF字符),这个被挂起的stdin在一个终端里,用Ctl-Q恢复
+    Ctl-U  删除光标到行首的所有字符,在某些设置下,删除全行. 
+    Ctl-V  当输入字符时,Ctl-V允许插入控制字符.比如,下边2个例子是等价的
+            echo -e '\x0a' 
+            echo <Ctl-V><Ctl-J> 
+            Ctl-V 在文本编辑器中十分有用,在vim中一样. 
+    Ctl-W  删除当前光标到前边的最近一个空格之间的字符. 
+           在某些设置下,删除到第一个非字母或数字的字符. 
+    Ctl-Z  终止前台工作. 
+
+
