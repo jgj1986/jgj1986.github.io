@@ -177,3 +177,10 @@ x: turn off X forwarding if it is on by default.
     grep  -E "InitGame|UserLogin" file_name | grep -o -E "equdid=[^:]*|channel=[^:]*" | awk '{if(NR%2==0){print $0}else{printf "%s:",$0}}' | sort | uniq | wc -l
     
 说明，`grep -o -E` 可以得到两个关键字的内容，但是输出到两行中，于是用awk在一行中输出。上面的 `print $0`（而不是用printf）就换行。
+
+### 非常有用的"if-grep" 结构
+
+    if grep -q bash test.sh 
+    then  # in new line
+        echo "find bash in test.sh"
+    fi
