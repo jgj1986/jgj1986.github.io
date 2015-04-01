@@ -64,9 +64,9 @@ defaults:
  
     -
         scope:
-            path: "program"
+            path: "language"
         values:
-            category: "program"
+            category: "language"
            
     -
         scope:
