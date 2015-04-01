@@ -61,7 +61,13 @@ defaults:
             path: "linux"
         values:
             category: "linux"
-            
+ 
+    -
+        scope:
+            path: "program"
+        values:
+            category: "program"
+           
     -
         scope:
             path: "go"
