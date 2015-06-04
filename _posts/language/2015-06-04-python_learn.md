@@ -122,9 +122,9 @@ lambda用户函数表达式
 ### sorted
 
     aa = [
-   {'name':'zhangsan', 'price':20.01, 'date':'2015-01-09T01:00:00Z'},
-   {'name':'lisi', 'price':10.01, 'date':'2013-01-09T01:00:00Z'},
-   {'name':'wangwu', 'price':0.01, 'date':'2012-01-09T01:00:00Z'}
+        {'name':'zhangsan', 'price':20.01, 'date':'2015-01-09T01:00:00Z'},  
+        {'name':'lisi', 'price':10.01, 'date':'2013-01-09T01:00:00Z'},  
+        {'name':'wangwu', 'price':0.01, 'date':'2012-01-09T01:00:00Z'}  
     ]  
     sorted(aa, key=lambda s:s.amount) #对list进行排序
     sorted(aa, key=lambda s:s.amount, reverse=True)
@@ -145,7 +145,7 @@ lambda用户函数表达式
     print se 
     #[0, 4, 16, 36, 64]
     
-## 一个实际例子
+## 一个例子
 
     tables=[[['db','table','index'],'key','val'], [['db1','table1','index1'],'key1','val1']]
     tables = [reduce(lambda a,b: a+b,[(y if type(y) == type([]) else [y]) for y in x ]) for x in tables ]
