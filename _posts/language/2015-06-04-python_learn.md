@@ -147,7 +147,7 @@ lambda用户函数表达式
     
 ## 一个例子
 
-    tables=[[['db','table','index'],'key','val'], [['db1','table1','index1'],'key1','val1']]
-    tables = [reduce(lambda a,b: a+b,[(y if type(y) == type([]) else [y]) for y in x ]) for x in tables ]
-    #[['db', 'table', 'index', 'key', 'val'], ['db1', 'table', 'index', 'key1', 'val1']]
+    test=[[['db','table','index'],'key','val'], [['db1','table1','index1'],'key1','val1']]
+    tables = [reduce(lambda a,b: a+b,[(y if type(y) == type([]) else [y]) for y in x ]) for x in test ]
+    #[['db', 'table', 'index', 'key', 'val'], ['db1', 'table1', 'index1', 'key1', 'val1']]
 
