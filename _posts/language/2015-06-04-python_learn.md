@@ -119,20 +119,6 @@ lambda用户函数表达式
     print (lambda x: x * 2)(3) 
     #6
 
-### sorted
-
-    aa = [
-        {'name':'zhangsan', 'price':20.01, 'date':'2015-01-09T01:00:00Z'},  
-        {'name':'lisi', 'price':10.01, 'date':'2013-01-09T01:00:00Z'},  
-        {'name':'wangwu', 'price':0.01, 'date':'2012-01-09T01:00:00Z'}  
-    ]  
-    sorted(aa, key=lambda s:s.amount) #对list进行排序
-    sorted(aa, key=lambda s:s.amount, reverse=True)
-
-    aa = [<Symbol: Symbol object>, <Symbol: Symbol object>, <Symbol: Symbol object>] 
-    sorted(aa, key=lambda s:s["date"]) #对Symbol对象进行排序，date为Symbol属性
-    sorted(aa, key=lambda s:s["date"], reverse=True)
-
 ###for特殊用法
     for i in range(4):
     print i
