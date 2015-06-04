@@ -144,6 +144,16 @@ lambda用户函数表达式
     se=[x**2 for x in range(10) if not x%2]
     print se 
     #[0, 4, 16, 36, 64]
+
+###zip
+zip函数接受任意多个（包括0个和1个）序列作为参数，返回一个tuple列表。
+
+    x = [1, 2, 3]
+    y = [a, b, c]
+    z = [A, B, C]
+    xyz = zip(x, y, z)
+    print xyz   
+    #[(1,a,A),(2,b,B),(3,c,C)]
     
 ## 一个例子
 
