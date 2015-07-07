@@ -73,7 +73,13 @@ defaults:
             path: "go"
         values:
             category: "go"
-            
+
+    -
+        scope:
+            path: "tools"
+        values:
+            category: "tools"
+           
     -
         scope:
             path: "运维"
