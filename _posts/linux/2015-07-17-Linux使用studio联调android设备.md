@@ -26,6 +26,7 @@ usb线连接移动设备和Linux电脑后，确保如下命令能看到设备
 而在识别设备时，遇到了一些问题，参看博客 [在Linux下adb连接不上android手机的终极解决方案](http://blog.csdn.net/liuqz2009/article/details/7942569){:target="_blank"}。
 
 我在操作过程中，修改了博客中说到的两个地方
+
     $ lsusb
     Bus 001 Device 009: ID 2717:0368   # 安卓设备
     ... 
