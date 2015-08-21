@@ -32,6 +32,12 @@ python 中lambda用来创建匿名函数，参考[Python中lambda表达式](http
 
     fs = [(lambda n, i=i : i + n) for i in range(10)]   
     
+call:
+    
+    fs[1](3)
+    4
+    fs[4](3)
+    7
 
 n的阶乘
 
