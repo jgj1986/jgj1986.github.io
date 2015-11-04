@@ -79,7 +79,13 @@ defaults:
             path: "tools"
         values:
             category: "tools"
-           
+
+    -
+        scope:
+            path: "iot"
+        values:
+            category: "iot"
+          
     -
         scope:
             path: "运维"
