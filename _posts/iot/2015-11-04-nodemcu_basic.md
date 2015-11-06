@@ -40,3 +40,8 @@ minicom中的一些配置如下:
 
 还可以使用Arduino来操控nodemcu，[Getting Started with Noduino on Windows](http://wiki.jackslab.org/Getting_Started_with_Noduino_on_Windows){:target="_blank"}
 
+## 使用mqtt协议远程操控
+
+[Introduction to the MQTT Protocol on NodeMCU](http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/){:target="_blank"} 
+介绍了使用使用开源的mqtt项目[mosquitto](http://mosquitto.org/){:target="_blank"}做服务端，[Paho Python Client](https://www.eclipse.org/paho/clients/python/)做客户端，
+达到控制LED等的效果。
