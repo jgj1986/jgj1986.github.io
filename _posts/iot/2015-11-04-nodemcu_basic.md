@@ -45,3 +45,50 @@ minicom中的一些配置如下:
 [Introduction to the MQTT Protocol on NodeMCU](http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/){:target="_blank"} 
 介绍了使用使用开源的mqtt项目[mosquitto](http://mosquitto.org/){:target="_blank"}做服务端，[Paho Python Client](https://www.eclipse.org/paho/clients/python/)做客户端，
 达到控制LED等的效果。
+
+## 固件编译、烧写
+
+在前面提到，烧写固件时，选用老版本固件会出现一些问题，于是决定使用 [github](https://github.com/nodemcu/nodemcu-firmware){:target="_blank"}上的代码，重新编译一份。
+
+要使用相应编译工具链，tools/esp-open-sdk.tar.gz，解析得到xtensa-lx106-elf，
+
+    $ export PATH=$PATH:/path/to/tools/esp-open-sdk/xtensa-lx106-elf/bin
+    $ make
+    $ ls bin
+    0x00000.bin  0x10000.bin
+
+这两个bin是刚生成的。使用esptools.py 命名烧写到板子上，参考 [esptool的github](https://github.com/themadinventor/esptool){:target="_blank"}
+    
+    $ sudo ./tools/esptool.py -p /dev/ttyUSB0 -b 9600 write_flash 0x00000 ./bin/0x00000.bin
+    $ sudo ./tools/esptool.py -p /dev/ttyUSB0 -b 9600 write_flash 0x10000 ./bin/0x10000.bin
+
+结果不好使。尝试使用flasher工具中自带的固件(git仓库下载后的 nodemcu-flasher-master/Resources/Binaries/nodemcu_integer_0.9.5_20150318.bin)，使用相同的方式写入，也是同样的问题：  
+乱码显示后没有等待输入的界面。  
+改变烧写模式，默认的是 `gio`，换为`dio`:
+
+    $ ./tools/esptool.py write_flash -h
+    ...
+    --flash_mode {qio,qout,dio,dout}, -fm {qio,qout,dio,dout}
+    ...
+    $ sudo ./tools/esptool.py -p /dev/ttyUSB0 115200 write_flash -fm dio 0x10000 /path/to/nodemcu_integer_0.9.5_20150318.bin
+
+烧写完成后，使用minicom连接，RTS重启下，就进入 输入界面，可以正常交互了。发现上面-b 设置不同的波特率，会影响烧写的速度，除此之外没有看到别的影响。使用这种方式，烧写编译好的两个bin文件
+
+    $ sudo ./esptool.py write_flash -fm dio 0x00000 ../nodemcu-firmware/bin/0x00000.bin
+    $ sudo ./esptool.py write_flash -fm dio 0x10000 ../nodemcu-firmware/bin/0x10000.bin
+
+烧写完成后，第一次进入，有个提示  Self adjust flash size，然后没有反应。重新使用minicom连接，就可以正常交互了。
+
+## 代码加载与执行
+
+在前面的 `minicom 控制`和`使用mqtt协议远程操控`章节，都应用了 `http://www.allaboutcircuits.com/` 上面的文章，里面用到了工具[luatool](https://github.com/4refr0nt/luatool){:target="_blank"}。
+
+    $ ./luatool.py -h
+    $ ./luatool.py -f net.lua -t net.lua -v 
+        # net.lua文件写到板子上，也命名为net.lua,-v显示过程
+    $ ./luatool.py -f net.lua -t net.lua -d -v
+        # -d 加载完成后执行该文件 dofile
+
+## 总结
+
+到此，在Linux下可以完成Nodemcu的一些最基本操作了。用到了工具 esptool、minicom、luatool等，因为ttyUSB0端口是单操作的，所以在使用执行esptool 或 luatool等命令是，minicom要断开。
