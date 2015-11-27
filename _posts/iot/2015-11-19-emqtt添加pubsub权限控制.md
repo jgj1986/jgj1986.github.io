@@ -43,6 +43,7 @@ emqttd_access_control.erl:
     check_bind(UserId, DeviceId) ->
         {ok,C}  = eredis:start_link(),
         {ok, Devs} = eredis:q(C,["SMEMBERS", UserId]),
+        eredis:stop(C),
         case lists:member(DeviceId, Devs) of
             true -> allow;
             false->deny
