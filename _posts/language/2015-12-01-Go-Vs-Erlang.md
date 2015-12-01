@@ -12,9 +12,9 @@ tags: iot
 
 ## 国内的一些讨论
 
-[Erlang和Golang的几点粗浅的比较](http://www.douban.com/note/233256219/):target="_blank"}、
-[给自己一条退路，再次比较Erlang和Golang](http://blog.sina.com.cn/s/blog_6e1bd8350102uwgl.html):target="_blank"}、
-[为什么我要选择erlang+go进行服务器架构(2)](http://studygolang.com/articles/912):target="_blank"}。
+[Erlang和Golang的几点粗浅的比较](http://www.douban.com/note/233256219/){:target="_blank"}、
+[给自己一条退路，再次比较Erlang和Golang](http://blog.sina.com.cn/s/blog_6e1bd8350102uwgl.html){:target="_blank"}、
+[为什么我要选择erlang+go进行服务器架构(2)](http://studygolang.com/articles/912){:target="_blank"}。
 
 基本验证如下观点，语言各种各的特点，但是没有哪个语言能胜任各个场景，且比其他的都好。
 
