@@ -1,5 +1,5 @@
 ---
-title:  Hadoop Namenode
+title:  Hadoop-Namenode
 date: 2016-03-04 17:12:28 +0800
 tags: tools
 - a
@@ -40,7 +40,7 @@ tags: tools
 到时候在machine1 和machine2 上都启动namenode服务即可。在最开始启动服务的时候，多采用如下的执行过程
 
     machine1> hdfs  namenode  –format
-        machine1> hadoop-daemon.sh  start namenode
+    machine1> hadoop-daemon.sh  start namenode
     machine2> hdfs namenode  -bootstrapStandby
     machine2> hadoop-daemon.sh  start  namenode
 
