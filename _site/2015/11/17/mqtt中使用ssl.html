@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Mqtt中使用ssl | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Mqtt中使用ssl</div>
+        <div class="date">date: 2015-11-17</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#mosquitto-">mosquitto 尝试</a></li>
+  <li><a href="#section">查找原因</a></li>
+  <li><a href="#emqttd-">emqttd 初试</a></li>
+  <li><a href="#emqttd--1">emqttd 解决</a></li>
+  <li><a href="#section-1">后续</a></li>
+</ul>
+
+<blockquote>
+  <p>本文为mqtt中使用ssl的笔记，这个过程中尝试了很多中方法，只为找到行之有效的方式。</p>
+</blockquote>
+
+<h2 id="mosquitto-">mosquitto 尝试</h2>
+
+<p>为什么样用mosquitto来尝试？因为在使用emqttd的时候出现了问题，emqttd的资料相对比较少，于是决定先用mosquitto. 下载<a href="http://mosquitto.org/files/source/mosquitto-1.4.5.tar.gz" target="_blank">mosquitto源码</a>，解压后执行<code>make</code>，得到可执行代码。</p>
+
+<p>修改配置文件，添加使用tls的证书文件。因为开始不知道具体应该如何使用证书文件，于是按照 <a href="http://blog.woshifengzi.com/2015/11/17/%E8%87%AA%E5%BB%BAssl.html" target="_blank">自建ssl</a>的方式创建的 <code>ca.crt</code>, <code>server.crt</code>,<code>server.key</code></p>
+
+<pre><code>listener 8883
+cafile /path/to/ca.crt
+certfile /path/to/server.crt
+keyfile /path/to/server.key
+</code></pre>
+
+<p>启动服务</p>
+
+<pre><code>./mosquitto -c /path/mosquitto.conf
+</code></pre>
+
+<p>服务端启动后，可以看到已经在监听8883端口了，emqttc也支持ssl的方式，而paho的文档看着更加详细，所以计划使用后者。</p>
+
+<p>pub代码如下:</p>
+
+<pre><code>...
+tls_dict = {'ca_certs':'/path/to/server.crt'}
+publish.single("TopicA", payload="test", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>执行时emqttd端没有反应，pub端有很多错误输出。</p>
+
+<pre><code>  File "/usr/lib/python2.7/ssl.py", line 381, in wrap_socket         
+    ciphers=ciphers)                                                 
+  File "/usr/lib/python2.7/ssl.py", line 141, in __init__            
+    ciphers)                                                         
+TypeError: an integer is required     
+</code></pre>
+
+<p>同时服务端也报错：</p>
+
+<pre><code>OpenSSL Error: error:140780E5:SSL routines:SSL23_READ:ssl handshake failure
+Socket error on client &lt;unknown&gt;, disconnecting.
+</code></pre>
+
+<h2 id="section">查找原因</h2>
+
+<p>首先定位 mosquitto 的tls，在<a href="https://eclipse.org/mosquitto/man/mosquitto-tls-7.php" target="_blank">官网上</a>看到有这样的提示：</p>
+
+<pre><code>It is important to use different certificate subject parameters for your CA, server and clients. If the certificates appear identical, even though generated separately, the broker/client will not be able to distinguish between them and you will experience difficult to diagnose errors.
+</code></pre>
+
+<p>于是尝试重新生成一份 client.crt 和 client.key，在paho中使用client的证书，仍然如此。在 <a href="https://bugs.launchpad.net/mosquitto/+bug/1221285" target="_blank">bug-1221285</a>的讨论中，看到使用自带的证书和mosquitto_sub命令，于是在源码的client端找到工具，</p>
+
+<pre><code>./mosquitto_sub -h localhost -p 8883 -t TopicA --cafile /path/to/mosquitto/test/ssl/test-root-ca.crt
+
+./mosquitto_pub -h localhost -p 8883 -t TopicA --cafile /path/to/mosquitto/test/ssl/test-root-ca.crt -m "test"
+</code></pre>
+
+<p>pub正常，而且sub也收到了消息，也就是说用这里的证书ok。此时继续用上面说到的 paho ，将证书做修改为此处的证书，仍然有同样问题，看到paho端最后提示是一个类型错误，于是尝试使用如下</p>
+
+<pre><code>tls_dict = {'ca_certs':'/path/to/mosquitto/test/ssl/test-root-ca.crt',
+        'certfile':'/path/to/mosquitto/test/ssl/client.crt',
+        'keyfile':'/path/to/mosquitto/test/ssl/client.key',
+        'tls_version':ssl.PROTOCOL_TLSv1} ## 添加此行
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>于是正常了！</p>
+
+<h2 id="emqttd-">emqttd 初试</h2>
+
+<p>基于上面的经验，在用eqmttd，配置文件emqttd.conf就直接使用上面已经验证过的证书文件</p>
+
+<pre><code>...
+{emqttd, [
+  {access, [
+    {auth, [
+        {anonymous, []}
+    ]},
+   ...
+   {listeners, [
+    {mqtts, 8883, [
+    %% Size of acceptor pool
+    {acceptors, 4},
+    %% Maximum number of concurrent clients
+    {max_clients, 512},
+    %% Socket Access Control
+    {access, [{allow, all}]},
+    %% SSL certificate and key files
+    {ssl, [{certfile, "/path/to/server.crt"},
+               {keyfile,  "/path/to/server.key"}]},
+    %% Socket Options
+    {sockopts, [
+                {backlog, 1024}
+                %{buffer, 4096},
+            ]}
+        ]},
+    ...
+    ]},
+...
+</code></pre>
+
+<p>服务端重启后，可以看到已经在监听8883端口了，使用 paho测试，得到错误信息</p>
+
+<pre><code>error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed 
+</code></pre>
+
+<h2 id="emqttd--1">emqttd 解决</h2>
+
+<p>看来是两个实现方式对证书的要求还不一样，做如下测试</p>
+
+<pre><code>tls_dict = {'ca_certs':'/home/work/mosquitto/test/ssl/test-root-ca.crt',
+    'tls_version':ssl.PROTOCOL_TLSv1}                
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>还继续有同样的问题，改为</p>
+
+<pre><code>tls_dict = {'ca_certs':'/home/work/mosquitto/test/ssl/all-ca.crt',
+    'tls_version':ssl.PROTOCOL_TLSv1}                
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>成功！！</p>
+
+<p>也就是说emqttd要求，服务端使用server的crt和key，客户端在使用的时候，直接提供证书即可，这和常见的https的方式比较一致。  </p>
+
+<h2 id="section-1">后续</h2>
+
+<p>使用自己生成的ca.cert, server.crt, server.key做测试</p>
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2015/11/17/mqtt中使用ssl" data-title="Mqtt中使用ssl" data-url="http://jgj1986.github.io/2015/11/17/mqtt%E4%B8%AD%E4%BD%BF%E7%94%A8ssl.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

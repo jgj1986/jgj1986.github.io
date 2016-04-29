@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Heka插件的开发笔记 | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Heka插件的开发笔记</div>
+        <div class="date">date: 2014-12-26</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#section">背景</a></li>
+  <li><a href="#section-1">基本规则</a>    <ul>
+      <li><a href="#section-2">初始化操作</a></li>
+      <li><a href="#section-3">关于配置</a></li>
+      <li><a href="#section-4">注册</a></li>
+      <li><a href="#section-5">补充</a></li>
+    </ul>
+  </li>
+  <li><a href="#logstreamerinput">logstreamer_input过程</a>    <ul>
+      <li><a href="#section-6">配置、结构体部分</a></li>
+      <li><a href="#section-7">运行</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-8">其他插件</a>    <ul>
+      <li><a href="#decoder">decoder</a></li>
+      <li><a href="#encoder">encoder</a></li>
+      <li><a href="#output">output</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-9">后续计划</a></li>
+</ul>
+
+<h2 id="section">背景</h2>
+
+<p>Push 想实现精准推送的功能，这就需要统计的数据来实现。而之前的日志格式和统一后的日志格式不兼容，为此做一个格式转化功能：将Json格式转为 <code>^B</code> 分隔的日志。 
+在转的过程中，Heka与Redis结合，实现实时统计的功能，并将转化好之后的日志落地。<br />
+本文中的插件的开发使用go语言。</p>
+
+<h2 id="section-1">基本规则</h2>
+
+<p>实现一个插件，首先是一些基本的初始化操作，再有需要实现几个基本的接口，即配置方面操作和注册操作。</p>
+
+<h3 id="section-2">初始化操作</h3>
+<p>Heka插件接口定义了初始化的操作，如下：</p>
+
+<pre><code>type Plugin interface {
+    Init(config interface{}) error
+}
+</code></pre>
+
+<p>例如一个最简单的例子，我们实现一个 <code>SimpleOutput</code> 的插件，初始化时，不需要做任何工作，则可以如下：</p>
+
+<pre><code>type SimpleOutput struct {
+}
+
+func (this *Push2KpOutput) Init(config interface{}) (err error) {
+    return
+}
+</code></pre>
+
+<h3 id="section-3">关于配置</h3>
+
+<p>从<a href="https://hekad.readthedocs.org/en/latest/developing/plugin.html" target="_blank">官网文档</a> 的 Custom Plugin Config Structs 知道，
+<code>HasConfigStruct</code>接口只有 <code>ConfigStruct</code> 的方法。假设一个简单的插件，不需要指定任何的配置，则如下</p>
+
+<pre><code>type SimpleOutputConfig struct {
+}
+
+func (this *SimpleOutput) ConfigStruct() interface{} {
+    return &amp;SimpleOutputConfig{}
+}
+</code></pre>
+
+<h3 id="section-4">注册</h3>
+<p>关于功能实现的部分后面在作介绍。在使用该插件前还有步重要的操作，即注册该插件。开始没有注册时，曾遇到提示</p>
+
+<pre><code>No registered plugin type: SimpleOutput
+</code></pre>
+
+<p>而注册插件只需要调用RegisterPlugin方法即可，官网也推荐在init函数中实现，即如下：</p>
+
+<pre><code>func init() {
+    RegisterPlugin("SimpleOutput", func() interface{} {
+        return new(SimpleOutput)
+    })
+}
+</code></pre>
+
+<h3 id="section-5">补充</h3>
+
+<p>此处说明的是对插件的开发中的一些过程，<a href="http://blog.woshifengzi.com/2014/12/09/Heka%E4%BD%BF%E7%94%A8%E5%AD%A6%E4%B9%A0.html">Heka使用学习</a>中的 <code>添加插件</code>部分的说明，更应该最开始的第一步操作。  </p>
+
+<pre><code>$ cmake/plugin_loader.cmake
+add_external_plugin(svn https://url_to/heka_plugins/simple:local)
+
+$ ls externals/simple/simple_output.go
+</code></pre>
+
+<p>要新增加的插件在配置的目录下。</p>
+
+<p>测试时还有一点浪费了一些时间，即配置文件中output的MessageMatcher先设成TRUE，让第一步的测试能看到结果，</p>
+
+<pre><code>[Simple_output]
+type = "SimpleOutput"
+message_matcher = "TRUE"
+</code></pre>
+
+<h2 id="logstreamerinput">logstreamer_input过程</h2>
+
+<p>heka提供了很多的插件样例，而了解了其中一个，也就可以融汇贯通，了解其他样例，开发新的插件也就没有什么问题了。<br />
+在实际开发的过程中使用了logstreamer的例子，此处即是此插件的一些笔记。</p>
+
+<h3 id="section-6">配置、结构体部分</h3>
+
+<p>看每个结构体中定义的变量，了解这些变量的用途以及必要性。<br />
+LogstreamerInputConfig结构体的内容，确定每</p>
+
+<pre><code>生成日志文件信息对象使用，hekad/config.go定义，HekadConfig结构体变量
+Hostname string 
+
+存放日志的基本路径
+LogDirectory  `toml:"log_directory"`
+
+存放Heka处理过程的路径，如处理到哪个文件的seek是多少了
+JournalDirectory
+
+文件名称匹配，如file_match = '(?P&lt;Year&gt;\d{4})(?P&lt;Month&gt;\d{2})/(?P&lt;Day&gt;\d{2})/(?P&lt;Hour&gt;\d{2})/\w+_\d{10}\.log'
+FileMatch `toml:"file_match"`
+
+文件匹配时的优先级，如 priority = ["Year", "Month", "Day", "Hour"]，就会按照我们设定的年月日时先后顺序读取文件
+Priority []string
+
+分开不同结果。比如源头有两种游戏，gameA、gameB，希望生成不同的名称，differentiator = ["gameA"]
+Differentiator []string
+
+对于接受到的日志，会有些日志认为太旧就过滤掉了。使用OldestDuration来限定过滤规则
+OldestDuration string `toml:"oldest_duration"`
+
+多久扫描一次，如有新的日志就继续前进
+RescanInterval 
+
+得到日志使用解码
+Decoder
+
+将日志文件分解为message所用到的格式，常用 message.proto
+ParserType
+
+指定日志所用的分隔符，如 '\n'
+Delimiter
+
+指定分隔符的位置，是开头还是结尾
+DelimiterLocation
+
+如果日志超过buffer的大小会截断，这些截断的是否丢弃
+KeepTruncatedMessages
+</code></pre>
+
+<p>上面是关于配置文件所用变量的定义，插件类（LogstreamerInput）本身也有一些变量，如</p>
+
+<pre><code>// 封装整个heka/pipeline配置的主要对象 pipeline/config.go中定义，
+pConfig      *p.PipelineConfig  
+
+// 关于log流的集合，logstreamer/filehandling.go中定义
+// 定义有rescanInterval/oldestDuration/logstreams
+logstreamSet *ls.LogstreamSet
+
+logstreamSetLock sync.RWMutex
+
+rescanInterval   time.Duration
+
+// 在一个配置文件中，可能会在多个地方使用这个插件，所以用一个map来存放
+plugins   map[string]*LogstreamInput
+
+// 看到[]chan chan bool 这个类型，先就蒙了
+// channel是原生值，即可以通过channel发送
+// 定义个渠道的数组，里面传递也是渠道，而这些里面的渠道传递的是bool
+// 因为plugins中可能有多个，所以stop的信息也就有多个了  --&gt; 还有疑问
+stopLogstreamChans  []chan chan bool
+
+// ??
+stopChan        chan bool
+
+// 解码名称
+decoderName     string
+// 处理
+parser              string
+
+// 关于分隔符的信息
+delimiter           string
+delimiterLocation   string 
+
+hostName            string
+pluginName      string
+keepTruncatedMessages       bool
+</code></pre>
+
+<p>Init函数基本就是初始化或配置上面的这些变量了</p>
+
+<h3 id="section-7">运行</h3>
+<p>LogstreamerInput 插件的主要功能是将日志流的入端，日志都按照一定的命名规则按照文件来存放。
+所以该插件会扫描这件日志文件，当有满足条件的日志到来时，就会导成流进入到Heka的处理过程中。</p>
+
+<p>此过程的几个知识点</p>
+
+<ul>
+  <li>
+    <p>扫描日志文件顺序
+按照我们配置所指定的优先级先后扫面日志文件，而且处理每个日志文件时都会记录偏移量，保证不重复，且利于日志的追加。<br />
+例子可参考上面代码中 年月日时，<code>priority = ["Year", "Month", "Day", "Hour"]</code>。<br />
+这些优先级是如何实现的，使用了heka的机制。</p>
+  </li>
+  <li>
+    <p>定时扫描
+直接看一段扫描处理过程的简要代码，即可明白。</p>
+
+    <p>rescan := time.Tick(li.rescanInterval)
+  for ok {
+      select {
+          case &lt;-li.stopChan:
+              ok = false
+              … 
+              close(li.stopChan)
+          case &lt;-rescan:
+              li.logstreamSetLock.Lock()
+              …
+              li.logstreamSetLock.Unlock() 
+      }
+  }</p>
+  </li>
+</ul>
+
+<p>这个过程中 stopChan的数据（信号）是如何得到的呢？使用了Heka默认的 <code>Stop</code>函数</p>
+
+<pre><code>func (li *LogstreamerInput) Stop() {
+    li.stopChan &lt;- true
+    &lt;-li.stopChan
+}
+</code></pre>
+
+<ul>
+  <li>
+    <p>扫描</p>
+
+    <p>扫描实际上用的是<code>LogstreamInput</code>的 Run方法！
+  &lt;待继续研究！&gt;</p>
+  </li>
+</ul>
+
+<h2 id="section-8">其他插件</h2>
+
+<h3 id="decoder">decoder</h3>
+<p>例如将一个json格式的数据转为以 <code>^B</code> 分隔的日志，可使用decoder的插件来实现，大体过程如下：</p>
+
+<pre><code>// Heka will call this to give us access to the runner.
+func (mj *MJPushDecoder) SetDecoderRunner(dr DecoderRunner) {
+    mj.dRunner = dr
+}
+
+// 此处定义json的格式
+type BodyInfo struct {
+    。。。
+}
+type PushMessage struct {
+    Event_id int
+    Body     BodyInfo
+}
+
+func (mj *MJPushDecoder) Decode(pack *PipelinePack) (packs []*PipelinePack, err error) {
+    // 做json解析
+    pushMessage := PushMessage{}
+    e = json.Unmarshal([]byte(*pack.Message.Payload), &amp;pushMessage)
+    if  e != nil {
+        fmt.Println(err)
+        return
+    }
+
+    var bf bytes.Buffer
+    bf.WriteString(time.Unix(int64(server_time),0).Format("2006-01-02T15:04:05+08:00"))
+    bf.WriteByte('\x02')
+    // 1 : IP
+    bf.WriteString(pushMessage.Body.Ip)
+    ....
+    bf.WriteByte('\n')  // 配置接收端的encoder时， append_newlines = false
+
+    newPayload := bf.String()
+    pack.Message.Payload = &amp;newPayload
+    
+    packs = []*PipelinePack{pack}
+    return
+}
+func init() { ... }// 注册
+</code></pre>
+
+<p>注意，decoder得到的pack不需要调用 <code>pack.Recycle()</code>！</p>
+
+<h3 id="encoder">encoder</h3>
+<p>在实现的代码中，encoder与decoder非常的相似，就不在提供代码！</p>
+
+<h3 id="output">output</h3>
+
+<p>我们在使用output时，用到了两种类型，一是参考 <code>file_logstreamer_output</code> 插件的方式，将heka流出的数据落入到指定路径、命名下的文件中；一是使用Redis做一些实时计算！<br />
+前者的具体代码与logstreamer_output很近，但是添加了两点:<br />
+* 根据接受到的日志时间，落到对应的 年月日时的文件中，即 yyyymm/dd/hh/xxx_yyyymmddhh.log
+* 为了与其他代码兼容，在某日志文件10分钟没有日志流入时，生成一个 yyyymm/dd/hh.done 的文件，表示该时段的日志接受完成。</p>
+
+<p>使用redis做计算的代码大体如下：</p>
+
+<pre><code>import (
+    ...
+    "github.com/garyburd/redigo/redis"
+)
+func init() { ... } // 注册
+type RedisOutput struct {
+    RedisPool        *redis.Pool
+    redisServer      string
+    redisPassword    string
+    redisMaxIdle     int 
+    redisIdleTimeout int 
+    ...
+}
+func (o *RedisOutput) ConfigStruct() interface{} { ... } // 默认的构造函数
+
+func (o *KptjHistoryRedisOutput) initPool() (err error) {
+o.RedisPool = &amp;redis.Pool{
+    MaxIdle:     o.redisMaxIdle,
+    IdleTimeout: time.Duration(o.redisIdleTimeout) * time.Second,
+    Dial: func() (redis.Conn, error) {
+        c, err := redis.Dial("tcp", o.redisServer)
+        if err != nil {
+            return nil, err
+        }
+        if _, err := c.Do("AUTH", o.redisPassword); err != nil {
+            c.Close()
+            return nil, err
+        }
+        return c, err
+    },
+    TestOnBorrow: func(c redis.Conn, t time.Time) error {
+        _, err := c.Do("PING")
+        return err
+    },
+}
+
+// test connection
+conn := o.RedisPool.Get()
+if _, err = conn.Do("PING"); err != nil {
+    return
+}
+conn.Close()
+return
+}
+func (o *RedisOutput) Init(config interface{}) (err error) { ... }
+
+func (this *RedisOutput) Run(or OutputRunner, h PluginHelper) (err error) {
+    inChan := or.InChan()
+ok := true
+ for ok {
+    select {
+    case pack, ok = &lt;-inChan:
+        if !ok {
+            break
+        }
+        conn := this.RedisPool.Get()
+                    ...  // 相应的redis操作  如  conn.Send("INCR", allUuidNewKey)
+                    conn.Close()
+            } // select
+    } // end of for
+    return
+}
+</code></pre>
+
+<p>注： 可使用 <code>conn.Send("MULTI")</code>  <code>...</code>  <code>conn.Do("EXEC")</code> 来保证redis操作的原子性！</p>
+
+<h2 id="section-9">后续计划</h2>
+
+<p>阅读Heka的源代码，从 <code>cmd/hekad/main.go</code>做入口，既能更深入了解heka，也能好好的学习go语言！！</p>
+
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2014/12/26/Heka插件的开发笔记" data-title="Heka插件的开发笔记" data-url="http://jgj1986.github.io/2014/12/26/Heka%E6%8F%92%E4%BB%B6%E7%9A%84%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

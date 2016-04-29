@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Go操作mysql Memcache Mongodb | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Go操作mysql Memcache Mongodb</div>
+        <div class="date">date: 2014-12-12</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#mysql">操作mysql</a></li>
+  <li><a href="#mongodb">操作mongodb</a></li>
+  <li><a href="#memcache">操作memcache</a></li>
+</ul>
+
+<blockquote>
+  <p>发现go提供的操作msyql、memcache、mongodb的文档没有lua-ngx的好读，即实例不是很明确，此文列出自己操作时的实例，可让快速入手，但是优化以及错误处理等还有很多工作。</p>
+</blockquote>
+
+<h3 id="mysql">操作mysql</h3>
+
+<p><a href="https://github.com/go-sql-driver/mysql/wiki/Examples" target="_blank">go-sql-driver/mysql Example</a> 上提供了用go操作mysql的两个例子。
+例子中关于查询，一个是一次只取一个结果，一个是一次去多个结果，而且使用了prepare的方法，防止sql注入攻击。<br />
+此文中是参考上面例子，做的测试。</p>
+
+<p>只取一个数据的例子</p>
+
+<pre><code>import (
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+    db, err := sql.Open("mysql", "user:passwd@tcp(host:port)/db_name")
+    if err != nil {
+        panic(err.Error())
+    }
+    defer db.Close()
+
+    stmtOut, err := db.Prepare("SELECT uid FROM mj_table limit 1")
+    if err != nil {
+        panic(err.Error())
+    }
+    var uid string
+    err = stmtOut.QueryRow().Scan(&amp;uid)
+    if err != nil {
+        Log.Info("err to Scan: %s", err)
+        return
+    }
+    Log.Info("uid: %s", uid)
+}
+</code></pre>
+
+<p>取多个数据的例子</p>
+
+<pre><code>...
+rows, err := db.Query("select appid from mj_table limit 1")
+if err != nil {
+    Log.Info("No Err in select msyql: %s", err)
+    return
+}   
+// Get column names
+columns, err := rows.Columns()
+if err != nil {
+    panic(err.Error()) 
+}   
+
+// Make a slice for the values
+values := make([]sql.RawBytes, len(columns))
+scanArgs := make([]interface{}, len(values))   // 必须要有此类型
+for i := range values {
+    scanArgs[i] = &amp;values[i]
+}
+
+// Fetch rows
+for rows.Next() {
+    // get RawBytes from data
+    err = rows.Scan(scanArgs...)
+    if err != nil {
+        panic(err.Error()) 
+    }
+    var value string
+    for i, col := range values {
+        if col == nil {
+            value = "NULL"
+        } else {
+           value = string(col)
+        }
+        Log.Info("name: %s, value: %s ", columns[i], value)
+    }
+    Log.Info("-----------------------------------")
+}
+...
+</code></pre>
+
+<h3 id="mongodb">操作mongodb</h3>
+<p><a href="https://gopkg.in/mgo.v2" target="_blank">mgo</a>是go语言操作MongoDb的驱动，因为接口比较丰富，<a href="http://godoc.org/gopkg.in/mgo.v2" target="_blank">官方文档</a>看着也就比较长。</p>
+
+<p>下面代码提供了建立连接、插入数据、查询、删除的操作</p>
+
+<pre><code>import (
+"time"
+"gopkg.in/mgo.v2"   // mgo的包
+"gopkg.in/mgo.v2/bson"
+)
+
+func main() {
+    var (
+        err error
+    )
+    //建立连接
+    mongoURL := "192.168.1.140,192.168.1.141:20001,192.168.1.141:20002"  //可在配置文件中设置
+    maxWait := time.Duration(10 * time.Second)
+    sess, err = mgo.DialWithTimeout(mongoURL, maxWait)
+    if err != nil {
+        Log.Error("mgo.Dial err:%s", err)
+        panic(err)
+    }   
+    sess.SetMode(mgo.Monotonic, true)
+    defer sess.Close()
+    
+    //插入数据      
+    //...构造要插入数据
+    db_name := "db"
+    table_name := "table"  // 即mongodb中的Collection
+    dataBytes := []byte("{\"name\":\"jgj\"}")
+    var intf map[string]interface{}
+    err = json.Unmarshal(dataBytes, &amp;intf)
+        
+    //...执行入库操作
+    // new_sess := sess.Copy()  // 可以复制一份回话，用新回话做操作
+    col := sess.DB(appid).C(classname)
+    err = col.Insert(intf)
+    if err != nil {
+         Log.Error("db POST, db insert error, appid:%s, class:%s, data:%s, err:%s", appid, classname, string(dataBytes), err)
+         return
+    }
+    
+    // 获取数据
+    var objectid interface{}
+    objectid = string("5486b4e08bb3c2659c000001")   
+    err = col.FindId(objectid).One(&amp;intf)
+    this.Data["json"] = intf
+    // this.ServeJson() // 显示
+    
+    // 更新某个对象
+    err = col.Update(bson.M{"_id": objectid, "updatedAt": oldUpdatedAt}, intf)
+
+    // 删除某个对象
+    err = col.RemoveId(objectid)
+    
+    // 查询
+    selectParam := "{\"name\":true, \"age\":true}"
+    var selectIntf map[string]bool
+    err = json.Unmarshal([]byte(selectParam), &amp;selectIntf)
+    whereParam := "{\"or\":[{\"name\":\"jgj\"},{\"age\":\"29\"}]}"
+    var whereIntf := map[string]interface{}{}
+    err = json.Unmarshal([]byte(whereParam), &amp;whereIntf)
+    //...json to bson. 代码未提供
+    ConvertBSON(whereIntf)
+    sortParam = "name,-age"
+    offset = 1
+    limit = 10
+
+    //...TODO 此处要有错误的判断
+    query := col.Find(whereIntf)
+    query = query.Sort(sortParam)
+    query = query.Select(selectIntf)
+    query = query.Skip(offset)
+    query = query.Limit(limit)
+    
+    iter := query.Iter()
+    var result []bson.M = make([]bson.M, 0)
+    intf := bson.M{}
+    for iter.Next(&amp;intf) {
+        result = append(result, intf)
+        intf = bson.M{}
+    }   
+    iter.Close()    
+    this.Data["json"] = result
+    this.ServeJson()
+}
+</code></pre>
+
+<h3 id="memcache">操作memcache</h3>
+<p><a href="https://godoc.org/github.com/bradfitz/gomemcache/memcache" target="_blank">GoDoc中memcache的说明</a>提供了操作的一些函数，没有给出实际的例子。
+下面是测试的小例子</p>
+
+<pre><code>con := memcache.New("ip:host")
+if con == nil {
+    Log.Info("Failed to connect Memcache")
+}
+
+item := &amp;memcache.Item{Key:"jgj",Value:[]byte("test_value"),Expiration:0 }
+err := con.Set(item)
+if err != nil {
+    Log.Info("failed to set item: %s", err)
+}
+
+item1, err := con.Get("jgj")
+if err != nil {
+    Log.Info("Failed to get item %s ", err)
+    return
+}
+Log.Info("get value: %s", item1.Value)
+</code></pre>
+
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2014/12/12/go操作mysql-memcache-mongodb" data-title="Go操作mysql Memcache Mongodb" data-url="http://jgj1986.github.io/2014/12/12/go%E6%93%8D%E4%BD%9Cmysql-memcache-mongodb.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

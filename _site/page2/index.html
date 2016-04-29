@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>记录生活工作中的点滴 | 我是疯子</title>
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <h1>记录生活工作中的点滴</h1>
+
+<hr class="small-margin" />
+
+<div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/19/emqtt%E6%B7%BB%E5%8A%A0pubsub%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6.html"><span class="title">Emqtt添加pubsub权限控制</span></a><span class="date">2015-11-19</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">背景</a></li>
+  <li><a href="#section-1">设计</a></li>
+  <li><a href="#section-2">实现</a></li>
+</ul>
+
+<h2 id="section">背景</h2>
+
+<p>物联网中规划的应用，用户和对应的某个物（此处称为设备）之间建立起了绑定关系，而只有有绑定关系的用户和设备的topic才能相互的pub/sub。为此在emqttd已有的权限控制基础上添加针对此功能的权限验证。</p>
+
+<h2 id="section-1">设计</h2>
+
+<p>用户和设备的绑定关系，在Redis中存放，emqttd端在收到用户pub/sub消息时，根据UserName和Topic来做判断。Topic的命名方式为 xxx/xxx/Dvid 或 xx/UsrId，为了描述方便，将Topic的最后字符串称为Name，也就是这里的Dvid或UsrId。如果请求时上传的UserName和TopicName一致，或 UserName绑定的设备中包含TopicName，则验证通过。</p>
+
+<p>注意，在实际的业务逻辑中，没有设备pub/sub用户名命名的Topic，所以上述过程不需要反向考虑。</p>
+
+<p>实际的应用场景中，需要记录物联网中中的操作日志，用于以后的数据分析，提高用户体验，所以我们预定一个特殊的用户名可以pub/sub所有Topic。</p>
+
+<h2 id="section-2">实现</h2>
+
+<p>emqttd_access_control.erl:</p>
+
+<pre><code>...
+topic_name(Topic) -&gt;
+    TopicL = lists:reverse(Topic),
+    sub_topic_name([],TopicL,[]).
+sub_topic_name([],[],Result) -&gt; Result;
+sub_topic_name(R1,[],Result) -&gt; R1;
+sub_topic_name(R1,[H|T],Result) -&gt;
+    case H of
+    47 -&gt;
+        case R1 of
+            -&gt; sub_topic_name([],[],R1)
+        end;
+    _-&gt; sub_topic_name([H|R1],T,Result)
+end.
+
+check_bind(UserId, DeviceId) -&gt;
+    {ok,C}  = eredis:start_link(),
+    {ok, Devs} = eredis:q(C,["SMEMBERS", UserId]),
+    eredis:stop(C),
+    case lists:member(DeviceId, Devs) of
+        true -&gt; allow;
+        false-&gt;deny
+    end.
+
+check_nametopic(#mqtt_client{username = Username}, Topic) -&gt;
+    case Username of
+        undefined -&gt; deny;
+        &lt;&lt;"SpecName"&gt;&gt; -&gt; allow;
+        _ -&gt;
+            TopicName = list_to_binary(topic_name(binary_to_list(Topic))),
+            if Username == TopicName -&gt;
+                allow;
+            true-&gt;
+                check_bind(Username, TopicName)
+            end
+    end.
+...
+
+check_acl(Client, PubSub, Topic) when ?IS_PUBSUB(PubSub) -&gt;
+    case check_nametopic(Client, Topic) of
+    ...
+</code></pre>
+
+<p>说明，eredis使用服务器本机的redis和默认端口，所以没有添加host与port。关于eredis的更多说明，参考其<a href="https://github.com/wooga/eredis" target="_blank">官网</a>。</p>
+
+<p>是<code>emqttd_protocol.erl</code>中执行publish、subscribe之前会调用 check_acl做权限控制。而此处是 emqttd_client.erl中监听到<code>inet_async</code>消息做进一步处理，执行到的。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/19/emqtt%E6%B7%BB%E5%8A%A0pubsub%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/17/%E8%87%AA%E5%BB%BAssl.html"><span class="title">自建ssl</span></a><span class="date">2015-11-17</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">缘起</a></li>
+  <li><a href="#section-1">概念</a></li>
+  <li><a href="#section-2">生成</a>    <ul>
+      <li><a href="#section-3">创建证书</a></li>
+      <li><a href="#section-4">生成证书请求文件</a></li>
+      <li><a href="#ca">使用ca生成证书</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-5">使用</a>    <ul>
+      <li><a href="#https">https中使用</a></li>
+      <li><a href="#mqtt">mqtt</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section">缘起</h2>
+
+<p>mqtt中基于安全的考虑，计划使用ssl，在<a href="https://pypi.python.org/pypi/paho-mqtt" target="_blank">paho的python手册</a>中看到，需要提供TLS的配置参数，即</p>
+
+<pre><code>dict = {'ca_certs':"&lt;ca_certs&gt;",'certfile':"&lt;certfile&gt;",'keyfile':"&lt;keyfile&gt;",'tls_version':"&lt;tls_version&gt;",'ciphers':"&lt;ciphers"&gt;}
+</code></pre>
+
+<p>基于这样情况，需要提供ca证书，cert文件，key文件。   </p>
+
+<h2 id="section-1">概念</h2>
+
+<p>SSL是在客户端和服务器之间建立一条SSL安全通道的安全协议，而OpenSSL是TLS/SSL协议的开源实现，提供开发库和命令行程序。常说的HTTPS是HTTP的加密版，底层使用的加密协议是SSL。</p>
+
+<p>而为了使用TLS/SSL协议，服务端配置时指定 server.crt　和 server.key 两份文件，客户端使用 ca.crt证书文件。</p>
+
+<h2 id="section-2">生成</h2>
+
+<p>该过程中可以理解为先创建ca.crt证书，然后生成生成server端的key和csr(证书请求文件)，使用这些文件生成server的crt文件。参考<a href="http://blog.didierstevens.com/2008/12/30/howto-make-your-own-cert-with-openssl/" target="_blank">Howto: Make Your Own Cert With OpenSSL</a>，具体每步的含义或者扩充的参数，可以参考<a href="http://www.myhack58.com/Article/60/63/2013/41328.htm" target="_blank">用openssl生成SSL使用的私钥和证书，并自己做CA签名</a>。</p>
+
+<p>在完成本文之后，发现生成自签名的ssl证书，可以不用创建ca的证书。详情参考<a href="http://www.akadia.com/services/ssh_test_certificate.html" target="_blank">How to create a self-signed SSL Certificate …</a>。</p>
+
+<h3 id="section-3">创建证书</h3>
+
+<pre><code>$ openssl genrsa -out ca.key 2048
+$ openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+# 此过程会输入很多信息，如国家、省市、单位等
+</code></pre>
+
+<h3 id="section-4">生成证书请求文件</h3>
+
+<pre><code>$ openssl genrsa -out server.key 2048 
+$ openssl req -new -key server.key -out server.csr
+# 此处直接使用上面的ca.key文件应该也可以
+</code></pre>
+
+<h3 id="ca">使用ca生成证书</h3>
+
+<pre><code>$ openssl x509 -req -days 3650 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
+</code></pre>
+
+<h2 id="section-5">使用</h2>
+
+<h3 id="https">https中使用</h3>
+
+<p>可在nginx中配置https，也就是在nginx的配置中使用如下方式</p>
+
+<pre><code>server
+{
+    listen 443;
+    ssl on;
+    ssl_certificate /path/to/server.crt;
+    ssl_certificate_key /path/to/server.key;
+...
+}
+
+# 请求方式，-k可以只做加密不做验证
+$ curl -X xx -k "https://xxxx"
+</code></pre>
+
+<p>nginx客户端权限验证，参考<a href="http://nategood.com/client-side-certificate-authentication-in-ngi" target="_blank">此文</a>,关于更多的配置信息，请参考 <a href="http://blog.woshifengzi.com/2015/12/14/nginx_https.html" target="_blank">nginx配置https服务</a>。</p>
+
+<h3 id="mqtt">mqtt</h3>
+
+<p>请参考<a href="http://blog.woshifengzi.com/2015/11/17/mqtt%E4%B8%AD%E4%BD%BF%E7%94%A8ssl.html" target="_blank">mqtt中使用ssl</a></p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/17/%E8%87%AA%E5%BB%BAssl.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/17/mqtt%E4%B8%AD%E4%BD%BF%E7%94%A8ssl.html"><span class="title">Mqtt中使用ssl</span></a><span class="date">2015-11-17</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#mosquitto-">mosquitto 尝试</a></li>
+  <li><a href="#section">查找原因</a></li>
+  <li><a href="#emqttd-">emqttd 初试</a></li>
+  <li><a href="#emqttd--1">emqttd 解决</a></li>
+  <li><a href="#section-1">后续</a></li>
+</ul>
+
+<blockquote>
+  <p>本文为mqtt中使用ssl的笔记，这个过程中尝试了很多中方法，只为找到行之有效的方式。</p>
+</blockquote>
+
+<h2 id="mosquitto-">mosquitto 尝试</h2>
+
+<p>为什么样用mosquitto来尝试？因为在使用emqttd的时候出现了问题，emqttd的资料相对比较少，于是决定先用mosquitto. 下载<a href="http://mosquitto.org/files/source/mosquitto-1.4.5.tar.gz" target="_blank">mosquitto源码</a>，解压后执行<code>make</code>，得到可执行代码。</p>
+
+<p>修改配置文件，添加使用tls的证书文件。因为开始不知道具体应该如何使用证书文件，于是按照 <a href="http://blog.woshifengzi.com/2015/11/17/%E8%87%AA%E5%BB%BAssl.html" target="_blank">自建ssl</a>的方式创建的 <code>ca.crt</code>, <code>server.crt</code>,<code>server.key</code></p>
+
+<pre><code>listener 8883
+cafile /path/to/ca.crt
+certfile /path/to/server.crt
+keyfile /path/to/server.key
+</code></pre>
+
+<p>启动服务</p>
+
+<pre><code>./mosquitto -c /path/mosquitto.conf
+</code></pre>
+
+<p>服务端启动后，可以看到已经在监听8883端口了，emqttc也支持ssl的方式，而paho的文档看着更加详细，所以计划使用后者。</p>
+
+<p>pub代码如下:</p>
+
+<pre><code>...
+tls_dict = {'ca_certs':'/path/to/server.crt'}
+publish.single("TopicA", payload="test", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>执行时emqttd端没有反应，pub端有很多错误输出。</p>
+
+<pre><code>  File "/usr/lib/python2.7/ssl.py", line 381, in wrap_socket         
+    ciphers=ciphers)                                                 
+  File "/usr/lib/python2.7/ssl.py", line 141, in __init__            
+    ciphers)                                                         
+TypeError: an integer is required     
+</code></pre>
+
+<p>同时服务端也报错：</p>
+
+<pre><code>OpenSSL Error: error:140780E5:SSL routines:SSL23_READ:ssl handshake failure
+Socket error on client &lt;unknown&gt;, disconnecting.
+</code></pre>
+
+<h2 id="section">查找原因</h2>
+
+<p>首先定位 mosquitto 的tls，在<a href="https://eclipse.org/mosquitto/man/mosquitto-tls-7.php" target="_blank">官网上</a>看到有这样的提示：</p>
+
+<pre><code>It is important to use different certificate subject parameters for your CA, server and clients. If the certificates appear identical, even though generated separately, the broker/client will not be able to distinguish between them and you will experience difficult to diagnose errors.
+</code></pre>
+
+<p>于是尝试重新生成一份 client.crt 和 client.key，在paho中使用client的证书，仍然如此。在 <a href="https://bugs.launchpad.net/mosquitto/+bug/1221285" target="_blank">bug-1221285</a>的讨论中，看到使用自带的证书和mosquitto_sub命令，于是在源码的client端找到工具，</p>
+
+<pre><code>./mosquitto_sub -h localhost -p 8883 -t TopicA --cafile /path/to/mosquitto/test/ssl/test-root-ca.crt
+
+./mosquitto_pub -h localhost -p 8883 -t TopicA --cafile /path/to/mosquitto/test/ssl/test-root-ca.crt -m "test"
+</code></pre>
+
+<p>pub正常，而且sub也收到了消息，也就是说用这里的证书ok。此时继续用上面说到的 paho ，将证书做修改为此处的证书，仍然有同样问题，看到paho端最后提示是一个类型错误，于是尝试使用如下</p>
+
+<pre><code>tls_dict = {'ca_certs':'/path/to/mosquitto/test/ssl/test-root-ca.crt',
+        'certfile':'/path/to/mosquitto/test/ssl/client.crt',
+        'keyfile':'/path/to/mosquitto/test/ssl/client.key',
+        'tls_version':ssl.PROTOCOL_TLSv1} ## 添加此行
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>于是正常了！</p>
+
+<h2 id="emqttd-">emqttd 初试</h2>
+
+<p>基于上面的经验，在用eqmttd，配置文件emqttd.conf就直接使用上面已经验证过的证书文件</p>
+
+<pre><code>...
+{emqttd, [
+  {access, [
+    {auth, [
+        {anonymous, []}
+    ]},
+   ...
+   {listeners, [
+    {mqtts, 8883, [
+    %% Size of acceptor pool
+    {acceptors, 4},
+    %% Maximum number of concurrent clients
+    {max_clients, 512},
+    %% Socket Access Control
+    {access, [{allow, all}]},
+    %% SSL certificate and key files
+    {ssl, [{certfile, "/path/to/server.crt"},
+               {keyfile,  "/path/to/server.key"}]},
+    %% Socket Options
+    {sockopts, [
+                {backlog, 1024}
+                %{buffer, 4096},
+            ]}
+        ]},
+    ...
+    ]},
+...
+</code></pre>
+
+<p>服务端重启后，可以看到已经在监听8883端口了，使用 paho测试，得到错误信息</p>
+
+<pre><code>error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed 
+</code></pre>
+
+<h2 id="emqttd--1">emqttd 解决</h2>
+
+<p>看来是两个实现方式对证书的要求还不一样，做如下测试</p>
+
+<pre><code>tls_dict = {'ca_certs':'/home/work/mosquitto/test/ssl/test-root-ca.crt',
+    'tls_version':ssl.PROTOCOL_TLSv1}                
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>还继续有同样的问题，改为</p>
+
+<pre><code>tls_dict = {'ca_certs':'/home/work/mosquitto/test/ssl/all-ca.crt',
+    'tls_version':ssl.PROTOCOL_TLSv1}                
+
+publish.single("TopicA", payload="newtest", qos=0,hostname="localhost", port=8883, tls=tls_dict)
+</code></pre>
+
+<p>成功！！</p>
+
+<p>也就是说emqttd要求，服务端使用server的crt和key，客户端在使用的时候，直接提供证书即可，这和常见的https的方式比较一致。  </p>
+
+<h2 id="section-1">后续</h2>
+
+<p>使用自己生成的ca.cert, server.crt, server.key做测试</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/17/mqtt%E4%B8%AD%E4%BD%BF%E7%94%A8ssl.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/13/codis.html"><span class="title">Codis</span></a><span class="date">2015-11-13</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">背景</a></li>
+  <li><a href="#section-1">安装</a></li>
+</ul>
+
+<h2 id="section">背景</h2>
+
+<p>很多场合需要redis集群，而codis相对于Redis Cluster(3.0)和twemproxy，似乎是一个比较好的解决方案。没有在实际场合做过测试，可以参考下Herry的<a href="http://www.infoq.com/cn/articles/effective-ops-part-03?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=" target="_blank">分享</a>。</p>
+
+<p>基于这样的情况，在项目中计划引入codis。直接参考了官网中文的<a href="https://github.com/wandoulabs/codis/blob/master/doc/tutorial_zh.md" target="_blank">Codis 使用文档</a>，文章介绍的已经比较详细，</p>
+
+<p>但是在实际配置过程中还是有些细节，需要注意下，本文就是记录这些细节。</p>
+
+<h2 id="section-1">安装</h2>
+
+<p>完全按照文档上的说明来执行就可以，服务需要zookeeper组建的支持，所以先配置并提供好zookeeper的服务。</p>
+
+<p>Codis后面的服务还是Redis的服务，可以将Redis服务以不同的组(group)加到集群中。</p>
+
+<p>启动codis-proxy时使用参数<code>--addr=0.0.0.0:19000 --http-addr=0.0.0.0:11000</code>，也就是用codis使用19000端口，提供了</p>
+
+<p>twemproxy的功能。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/13/codis.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/12/mqtt%E7%9A%84%E4%BD%BF%E7%94%A8.html"><span class="title">Mqtt的使用</span></a><span class="date">2015-11-12</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">简单测试</a></li>
+  <li><a href="#nodemcu--emqtt">NodeMcu 使用 emqtt</a></li>
+</ul>
+
+<blockquote>
+  <p>mqtt隐然有成为物联网标准协议的趋势，计划使用mqtt做一些简单的测试。</p>
+</blockquote>
+
+<h2 id="section">简单测试</h2>
+
+<p>关于mqtt标准是怎么一回事，此处就不在赘述了。只是说一下个人理解，她只是个协议的标准，目前有比较多的实现版本。个人了解到的服务端实现起来比较困难，而客户端(client)则相对容易一些。</p>
+
+<p>更加基本说明，建议参考 <a href="http://www.hivemq.com/blog/mqtt-essentials/" target="_blank">MQTT Essentials</a>。</p>
+
+<p><a href="http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/" target="_blank">NodeMCU使用mqtt</a> 一文中，使用了介绍了使用使用开源的mqtt项目<a href="http://mosquitto.org/" target="_blank">mosquitto</a>做服务端，最近自己在阅读 <a href="https://github.com/emqtt/emqttd" target="_blank">emqttd</a>的一些源代码。做了如下一个测试，服务端用emqttd，客户端分别用 <a href="https://github.com/emqtt/emqttc" target="_blank">emqttc</a>和<a href="https://www.eclipse.org/paho/clients/python/">Paho Python Client</a>做客户端。</p>
+
+<p>使用emqttc中的simple_example.erl 和 Paho 示例的sub.py，修改其中的服务端，并且将Topic都改为 “TopicA”</p>
+
+<pre><code>$ ./sub.py
+TopicA 0 hello
+
+$ erl -pz /path/to/emqttc/ebin -pz /path/to/emqttc/deps/gen_logger/ebin
+&gt; c(simple_example).
+&gt; simple_example:start().
+</code></pre>
+
+<h2 id="nodemcu--emqtt">NodeMcu 使用 emqtt</h2>
+
+<p>copy了<a href="http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/" target="_blank">NodeMCU使用mqtt</a> 中的一些代码做测试，能验证整个服务可以打通。此处列出相关代码，应该没有版权纠纷吧 :-) </p>
+
+<p>mqtt.lua</p>
+
+<pre><code>m_dis = {}
+MQTT_CLIENTID = "esp-blinkenlite"
+MQTT_HOST = "EMQTTD host"
+MQTT_PORT = 1883
+
+function animate(m, pl)
+    m:publish("/mcu/status", "--&gt; ANIMATE COMMAND", 0, 0,
+        function(m) print("ANIMATE COMMAND") end)
+
+    if pl == "0" then
+        m:publish("/mcu/status", "--&gt; LED OFF", 0, 0,
+            function(m) print("LED OFF") end)
+        tmr.stop(1)
+
+    elseif pl == "1" then
+        m:publish("/mcu/status", "--&gt; R-G-B Mode", 0, 0,
+            function(m) print("RGB Mode") end)
+        tmr.stop(1)
+    
+    elseif pl == "2" then
+        m:publish("/mcu/status", "--&gt; Random-Breathe Mode", 0, 0,
+            function(m) print("Random-Breathe Mode") end)    
+        tmr.stop(1)
+    
+    elseif pl == "3" then
+        m:publish("/mcu/status", "--&gt; Disco Mode", 0, 0,
+            function(m) print("Disco Mode") end) 
+        tmr.stop(1)
+    
+    else
+        m:publish("/mcu/status", "--&gt; Error: Unknown Command", 0, 0,
+            function(m) print("ERROR: UNKNOWN COMMAND") end)
+    end
+end
+
+
+m_dis["/mcu/cmd/animate"] = animate
+
+m = mqtt.Client(MQTT_CLIENTID, 60, "", "") -- Living dangerously. No password!
+
+m:on("connect", function(m) 
+        print ("\n\n", MQTT_CLIENTID, " connected to MQTT host ", MQTT_HOST,
+        " on port ", MQTT_PORT, "\n\n")
+        m:subscribe("/mcu/cmd/#", 0,
+        function(m) print("Subscribed to CMD Topic") end)
+    end)
+
+
+m:on("offline", function(m)
+        print ("\n\nDisconnected from broker")
+        print("Heap: ", node.heap())
+    end)
+
+
+m:on("message", function(m,t,pl)
+    print("PAYLOAD: ", pl)
+    print("TOPIC: ", t)
+
+    if pl~=nil and m_dis[t] then
+        m_dis[t](m,pl)
+    end
+end)
+
+m:connect(MQTT_HOST, MQTT_PORT, 0, 1)
+</code></pre>
+
+<p>init.lua</p>
+
+<pre><code>wifi.setmode(wifi.STATION)
+wifi.sta.config("Baidu2728","12345678")
+ip, nm, gw = wifi.sta.getip()
+
+local wifi_counter = 0
+
+tmr.alarm(0, 1000, 1, function()
+    if wifi.sta.getip() == nil then
+        print("Connecting to AP...\n")
+
+        -- Rotate through RGB colors while waiting
+        wifi_counter = wifi_counter + 1;
+    else
+        ip, nm, gw = wifi.sta.getip()
+
+        -- Debug info
+        print("\n\nIP Info: \nIP Address: ",ip)
+        print("Netmask: ",nm)
+        print("Gateway Addr: ",gw,'\n')
+
+        tmr.stop(0)     -- Stop the polling loop
+
+        -- Continue to main function after network connection
+        dofile("mqtt.lua")
+    end
+end)
+</code></pre>
+
+<p>使用luatool工具将代码写入，并执行</p>
+
+<pre><code>$sudo luatool -f mqtt.lua -t mqtt.lua -vr
+$sudo luatool -f init.lua -d -vr
+</code></pre>
+
+<p>这时候，就会等 /mcu/cmd/animate 这个topic的消息，</p>
+
+<pre><code>publish.single("/mcu/cmd/animate", "1", hostname="EMQTTD host")
+</code></pre>
+
+<p>nodemcu收到消息后，会向/mcu/status 发布消息，如果订阅这个topic，就可以收到模拟的状态信息。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/12/mqtt%E7%9A%84%E4%BD%BF%E7%94%A8.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/05/net.html"><span class="title">Net</span></a><span class="date">2015-11-05</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">查看网络使用情况</a></li>
+  <li><a href="#section-1">查看网络带宽</a></li>
+  <li><a href="#section-2">开放端口</a></li>
+  <li><a href="#section-3">抓包</a></li>
+</ul>
+
+<h2 id="section">查看网络使用情况</h2>
+
+<p><a href="http://www.binarytides.com/linux-commands-monitor-network/" target="_blank">18Linux网络监控工具</a> 列出了很多网络监测工具，自己尝试使用iftop</p>
+
+<h2 id="section-1">查看网络带宽</h2>
+
+<p>受各种影响，这个得到的结果可能会不一样。使用wget一个带宽足够大的下载地址，可以查看当前情况</p>
+
+<pre><code>wget http://cachefly.cachefly.net/100mb.test
+</code></pre>
+
+<h2 id="section-2">开放端口</h2>
+
+<pre><code>$ lsof -i:8080
+    $ netstat -lt | grep 8080
+</code></pre>
+
+<p>参考<a href="http://wowubuntu.com/lsof.html" target="_blank">Unix调试的瑞士军刀：lsof</a>黑客志文章打不开；<br />
+<a href="http://www.cnblogs.com/ggjucheng/archive/2012/01/08/2316661.html" target="_blank">Linux netstat命令详解</a></p>
+
+<h2 id="section-3">抓包</h2>
+
+<pre><code>$tcpdump tcp port 23 and host 210.27.48.1
+</code></pre>
+
+<p>参考<a href="http://www.cnblogs.com/ggjucheng/archive/2012/01/14/2322659.html" target="_blank">Linux tcpdump命令详解</a>。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/05/net.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/05/erlang.html"><span class="title">Erlang</span></a><span class="date">2015-11-05</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">编译</a></li>
+  <li><a href="#supervisor">Supervisor</a></li>
+</ul>
+
+<h2 id="section">编译</h2>
+<p>物联网WIFI很多情况下使用mqtt协议，现在开源的比较好的可能是emqtt，github上有<a href="" target="_blank">服务端</a>和<a href="" target="_blank">客户端</a>的代码。
+但是尝试使用客户端例子的时候，却浪费了很长时间，主要原因是对erlang不熟悉。</p>
+
+<ol>
+  <li>文件A.erl要使用文件B.erl文件的函数，其函数要expect出来。如果要直接使用，则应该是要有 *.beam文件，而不是 .erl 文件</li>
+  <li>
+    <p>如果在同一个目录下可以不用做其他的引用，如果在不同目录下，则需要添加载入的搜索路径</p>
+
+    <p>erl
+ &gt; code:add_pathz(“/path/to/ebin”).</p>
+
+    <p>erl -pz /path/to/ebin
+ &gt;</p>
+  </li>
+</ol>
+
+<p>add_pathz和pz加载到搜索的最后面，add_patha和pa加载到搜索的最前面。</p>
+
+<h2 id="supervisor">Supervisor</h2>
+
+<p>Erlang有四大behavior(<code>supervisor</code>、<code>gen_server</code>、<code>gen_fsm</code>、<code>gen_event</code>)，在阅读emqttd的源代码时，发现比较多的modules都是用start_child的方式启动的。大体方式如下：</p>
+
+<pre><code>Servers = [{"emqttd ctl", emqttd_ctl}, 
+    {"emqttd pooler", {supervisor, emqttd_pooler_sup}}, 
+    {"emqttd broker", emqttd_broker},
+    {"emqttd system monitor", emqttd_sysmon, emqttd:env(sysmon)}], 
+start_server(Sup, {Name, Server}) -&gt;
+    start_child(Sup, Server).
+start_server(Sup, {Name, Server, Opts}) -&gt;
+    start_child(Sup, Server, Opts).
+start_child(Sup, {supervisor, Module}) -&gt;
+    supervisor:start_child(Sup,
+    {Module,{Module,start_link,[]},permanent, infinity, supervisor,[Module]}).
+start_child(Sup,{Module}) -&gt;
+    start_child(Sub, {Module,[]}).
+start_child(Sub,{Module,[Opts]})-&gt;
+    supervisor:start_child(Sup,
+    {Module,{Module,start_link,[]},permanent, 10000, worker,[Module]}).
+</code></pre>
+
+<p>start_child中有几个参数，网上的介绍也比较多了，此处只是说明，启动的类型只有<code>supervisor</code>和<code>worker</code>两种，只要没有实现supervisor behavior的进程都是worker。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/05/erlang.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/11/04/nodemcu_basic.html"><span class="title">Nodemcu_basic</span></a><span class="date">2015-11-04</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">入门</a></li>
+  <li><a href="#minicom">minicom控制</a></li>
+  <li><a href="#arduino">Arduino</a></li>
+  <li><a href="#mqtt">使用mqtt协议远程操控</a></li>
+  <li><a href="#section-1">固件编译、烧写</a></li>
+  <li><a href="#section-2">代码加载与执行</a></li>
+  <li><a href="#section-3">总结</a></li>
+</ul>
+
+<h2 id="section">入门</h2>
+<p>NodeMcu论坛上有一篇比较好的入门文章<a href="http://bbs.nodemcu.com/t/nodemcu/104" target="_blank">NodeMcu三小时入门</a>，开始时按照里面的步骤，烧写固件。
+这个过程中遇到了两个问题：
+1、USB驱动，提示的的CP2102 usb to uart bridge controller 的驱动有问题，那就不要在使用CH340的驱动了。Windows7系统自己不能识别，则网上搜集CP2102的驱动下载安装。
+2、固件烧写，曾经尝试烧写了两个版本，2014xx和20150122的，但是之后在连接时没有输出，或者输出不能输入，是因为固件版本还是太低，而硬件已经是高级别的硬件了。到github上去下载最近的<a href="https://github.com/nodemcu/nodemcu-flasher" target="_blank">flasher</a>和<a href="https://github.com/nodemcu/nodemcu-firmware" target="_blank">固件</a>。使用较新版本烧写之后连接，则可以测试lua的helloworld了。</p>
+
+<p>后续测试连接wifi，获取网络地址的时候，可能要等待一段时间才得到ip地址。</p>
+
+<h2 id="minicom">minicom控制</h2>
+
+<p>Linux上使用minicom也可以控制NodeMcu，将已经烧写过固件的板子连接到Linux系统上，会有 /dev/ttyUSB0。
+minicom中的一些配置如下: </p>
+
+<pre><code>Serial Device: /dev/ttyUSB0
+Bps/Par/Bits    : 9600 8N1
+Hardware Flow Control                       : No
+Software Flow Control : No
+</code></pre>
+
+<p>之后 RST 键重启下开发板，</p>
+
+<pre><code>NodeMCU 0.9.5 build 20150318  powered by Lua 5.1.4                                                                                                     
+lua: cannot open init.lua                                                                                                                          
+&gt; print("helloworld world") 
+hello world
+</code></pre>
+
+<p>参考: <a href="http://www.allaboutcircuits.com/projects/how-to-make-an-interactive-tcp-server-nodemcu-on-the-esp8266/" target="_blank">How to Make an Interactive TCP Server    with NodeMCU on the ESP8266</a>，</p>
+
+<h2 id="arduino">Arduino</h2>
+
+<p>还可以使用Arduino来操控nodemcu，<a href="http://wiki.jackslab.org/Getting_Started_with_Noduino_on_Windows" target="_blank">Getting Started with Noduino on Windows</a></p>
+
+<h2 id="mqtt">使用mqtt协议远程操控</h2>
+
+<p><a href="http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/" target="_blank">Introduction to the MQTT Protocol on NodeMCU</a> 
+介绍了使用使用开源的mqtt项目<a href="http://mosquitto.org/" target="_blank">mosquitto</a>做服务端，<a href="https://www.eclipse.org/paho/clients/python/">Paho Python Client</a>做客户端，
+达到控制LED等的效果。</p>
+
+<h2 id="section-1">固件编译、烧写</h2>
+
+<p>在前面提到，烧写固件时，选用老版本固件会出现一些问题，于是决定使用 <a href="https://github.com/nodemcu/nodemcu-firmware" target="_blank">github</a>上的代码，重新编译一份。</p>
+
+<p>要使用相应编译工具链，tools/esp-open-sdk.tar.gz，解析得到xtensa-lx106-elf，</p>
+
+<pre><code>$ export PATH=$PATH:/path/to/tools/esp-open-sdk/xtensa-lx106-elf/bin
+$ make
+$ ls bin
+0x00000.bin  0x10000.bin
+</code></pre>
+
+<p>这两个bin是刚生成的。使用esptools.py 命名烧写到板子上，参考 <a href="https://github.com/themadinventor/esptool" target="_blank">esptool的github</a></p>
+
+<pre><code>$ sudo ./tools/esptool.py -p /dev/ttyUSB0 -b 9600 write_flash 0x00000 ./bin/0x00000.bin
+$ sudo ./tools/esptool.py -p /dev/ttyUSB0 -b 9600 write_flash 0x10000 ./bin/0x10000.bin
+</code></pre>
+
+<p>结果不好使。尝试使用flasher工具中自带的固件(git仓库下载后的 nodemcu-flasher-master/Resources/Binaries/nodemcu_integer_0.9.5_20150318.bin)，使用相同的方式写入，也是同样的问题：<br />
+乱码显示后没有等待输入的界面。<br />
+改变烧写模式，默认的是 <code>gio</code>，换为<code>dio</code>:</p>
+
+<pre><code>$ ./tools/esptool.py write_flash -h
+...
+--flash_mode {qio,qout,dio,dout}, -fm {qio,qout,dio,dout}
+...
+$ sudo ./tools/esptool.py -p /dev/ttyUSB0 115200 write_flash -fm dio 0x10000 /path/to/nodemcu_integer_0.9.5_20150318.bin
+</code></pre>
+
+<p>烧写完成后，使用minicom连接，RTS重启下，就进入 输入界面，可以正常交互了。发现上面-b 设置不同的波特率，会影响烧写的速度，除此之外没有看到别的影响。使用这种方式，烧写编译好的两个bin文件</p>
+
+<pre><code>$ sudo ./esptool.py write_flash -fm dio 0x00000 ../nodemcu-firmware/bin/0x00000.bin
+$ sudo ./esptool.py write_flash -fm dio 0x10000 ../nodemcu-firmware/bin/0x10000.bin
+</code></pre>
+
+<p>烧写完成后，第一次进入，有个提示  Self adjust flash size，然后没有反应。重新使用minicom连接，就可以正常交互了。</p>
+
+<h2 id="section-2">代码加载与执行</h2>
+
+<p>在前面的 <code>minicom 控制</code>和<code>使用mqtt协议远程操控</code>章节，都应用了 <code>http://www.allaboutcircuits.com/</code> 上面的文章，里面用到了工具<a href="https://github.com/4refr0nt/luatool" target="_blank">luatool</a>。</p>
+
+<pre><code>$ ./luatool.py -h
+$ ./luatool.py -f net.lua -t net.lua -v 
+    # net.lua文件写到板子上，也命名为net.lua,-v显示过程
+$ ./luatool.py -f net.lua -t net.lua -d -v
+    # -d 加载完成后执行该文件 dofile
+</code></pre>
+
+<h2 id="section-3">总结</h2>
+
+<p>到此，在Linux下可以完成Nodemcu的一些最基本操作了。用到了工具 esptool、minicom、luatool等，因为ttyUSB0端口是单操作的，所以在使用执行esptool 或 luatool等命令是，minicom要断开。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/11/04/nodemcu_basic.html">继续阅读全文</a></div>
+    </div>
+    
+</div>
+
+<div class="nav-post-links">
+        
+        <span class="newer-posts-link">
+            
+                <a href="/">&laquo; Newer Posts</a>
+            
+        </span>
+        
+
+        
+        <span class="older-posts-link">
+            <a href="/page3" title="next page">Older Posts &raquo;</a>
+        </span>
+        
+</div>
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

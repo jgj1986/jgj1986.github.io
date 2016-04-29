@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Redis服务搭建 | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Redis服务搭建</div>
+        <div class="date">date: 2015-01-07</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#redis">redis集群</a></li>
+  <li><a href="#section">主从备份</a></li>
+  <li><a href="#twemproxy">Twemproxy</a></li>
+  <li><a href="#section-1">访问权限</a></li>
+</ul>
+
+<p>如果只是简单的启动一个redis服务，直接使用redis-server命令就好了。这儿主要是想探讨下搭建可靠与安全的redis服务。
+<a href="http://blog.woshifengzi.com/2015/11/13/codis.html" target="_blank">More about Codis</a></p>
+
+<h3 id="redis">redis集群</h3>
+<p>期待已久的redis 3.0 版本终于还是没有稳定版，但是已经有了 unstable 的分支可以搭建个集群使用。
+<a href="http://redisdoc.com/topic/cluster-tutorial.htm" target="_blank">redis的官网文档 集群教程</a> 比较详细的描述了配置和使用redis集群。 
+关于配置redis集群可以简单的描述为如下：</p>
+
+<p>设定配置文件(./redis.conf)，重点是允许使用集群 <code>cluster-enabled yes</code></p>
+
+<pre><code>port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+</code></pre>
+
+<p>启动多个这个的节点，如端口依次是 7000,7001,7002</p>
+
+<pre><code>/path/to/redis-server ./redis.conf
+</code></pre>
+
+<p>然后使用命令启动集群：</p>
+
+<pre><code>./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002    
+</code></pre>
+
+<p>李万川在<a href="wiki.mjyun.com/index.php/Redis" target="_blank">摩羯wiki</a>上有关于创建的介绍说明。当然更加详细的说明还是看看官网上的介绍！</p>
+
+<p>但不管怎么说，这个版本还是unstable版本，不建议直接用在线上环境。
+补充一点，这样的集群中其实也是两个节点之间有主、从关系。如果相应的主从都挂掉了，数据也就无法访问了。</p>
+
+<h3 id="section">主从备份</h3>
+
+<p>不想memcache，redis本身就可以内容写回磁盘，通过好的配置，定期向磁盘写回数据，机器redis进程挂掉、服务器挂掉，重启后依然可以正常服务。<br />
+但是如果磁盘也损坏了，或者对数据的要求很高，在重启服务这段时间不能访问会带来很严重的影响。这种情况下就可以采用主从备份。<br />
+搭建过程参考<a href="http://redisdoc.com/topic/replication.html" target="_blank">redis的复制</a>。</p>
+
+<p>线上机器确实也搭建了主从服务，但是主服务一直没有宕掉过，也就没有机会体验下主从快速切换的惊心动魄。
+但是有了主从之后，确实也带来了一个好处，就是对外部的一些服务查询，直接使用从服务器，减少了主服务的压力，不知道这样设计是否有不妥之处。</p>
+
+<h3 id="twemproxy">Twemproxy</h3>
+
+<p>如果不只是简单的主从，又想使用redis的集群，而感觉unstable又不是那么放心，那么通过 Proxy 的方式来实现存储集群就是比较好的选择了，
+常见即是twitter的<a href="https://github.com/twitter/twemproxy" target="_blank">Twemproxy</a>。</p>
+
+<p>twemproxy的安装过程不在介绍，可以参考<a href="http://www.cnblogs.com/haoxinyue/p/redis.html" target="_blank">基于Twemproxy的Redis集群方案</a>。</p>
+
+<pre><code>./twemproxy -c twemproxy.xml -d -v 4 -s 51002 -p twemproxy.pid -o twemproxy.log
+</code></pre>
+
+<p>我们线上实现时，twemproxy只是做一个代理，请求key会根据hash分到不同的redis节点上，这样会带来一个问题：如果某个节点过了，在启动前，上面的数据也就访问不到了。<br />
+关于其优缺点参考 <a href="http://blog.csdn.net/hguisu/article/details/9174459" target="_blank">Redis 代理服务Twemproxy</a></p>
+
+<h3 id="section-1">访问权限</h3>
+
+<p>从安全角度来讲，redis不能知道端口就能访问，特别是有外网的情况，所以就要设置访问密码。只用是在配置文件中添加，如：</p>
+
+<pre><code>requirepass "password"
+</code></pre>
+
+<p>还可以在redis的交互式命令行下添加，如</p>
+
+<pre><code>&gt; config set requirepass password   
+</code></pre>
+
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2015/01/07/redis服务搭建" data-title="Redis服务搭建" data-url="http://jgj1986.github.io/2015/01/07/redis%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

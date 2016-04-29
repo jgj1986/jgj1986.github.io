@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>记录生活工作中的点滴 | 我是疯子</title>
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <h1>记录生活工作中的点滴</h1>
+
+<hr class="small-margin" />
+
+<div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/04/07/kafka.html"><span class="title">Kafka</span></a><span class="date">2015-04-07</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">安装</a></li>
+  <li><a href="#section-1">使用</a></li>
+  <li><a href="#section-2">思考</a></li>
+</ul>
+
+<blockquote>
+  <p>数据流接收分发的方式很多，用了很长时间的Heka，但是Kafka更加流行一些。最近看到Spark 已经与Kafka直接结合，可以摄取实时事件数据；觉得有必要在多了解下，以后应该会用到</p>
+</blockquote>
+
+<h2 id="section">安装</h2>
+<p>作为分布式的系统，kafka支持多种实例</p>
+
+<pre><code>单节点单broker实例
+单节点多broker实例
+多节点多实例
+</code></pre>
+
+<p>相对而言kafka集群的安装时比较容易的，不多介绍，
+可参考<a href="http://www.tuicool.com/articles/RNbU32B" target="_blank">Kafka详解之如何配置Kafka集群</a>、<a href="https://kafka.apache.org/documentation.html#quickstart" target="_blank">Kafka QuickStart</a>。</p>
+
+<h2 id="section-1">使用</h2>
+<p>Kafka官网上有创建topic、发送信息、使用信息的例子，此处不再举例。在实际的应用中，要获取的数据都已经落地以文件形式存在，如nginx的访问日志等。<br />
+在要用Kafka分析处理的就是这些日志，如何将这些处理进入到Kafka集群中呢？</p>
+
+<pre><code>tail -n 0 -f /data/logs/nginx_access.log  | bin/kafka-console-producer.sh --broker-list 192.168.1.10:9092 --topic test
+</code></pre>
+
+<p>kafka使用scala开发，支持多语言客户端（c++、java、python、go等），详细的使用列表情况，参考 <a href="https://cwiki.apache.org/confluence/display/KAFKA/Clients" target="_blank">Apache Kafka Client</a>，
+例如有 <a href="https://github.com/mumrah/kafka-python" target="_blank">python-kafka</a>。</p>
+
+<h2 id="section-2">思考</h2>
+<p>常见的配置中，kafka都是和zookeeper在同样的机器上，其实两者是可以分开的。Kafka的集群使用Zookeeper集群的一些配置。
+Kafka、Storm、Hbase、Dubbo等都广泛的使用Zookeeper，如果一个Zookeeper集群被这些工具同时使用，是否会有数据的冲突呢，
+又有什么办法可以避免这些冲突呢？</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/04/07/kafka.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/02/16/%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C.html"><span class="title">时间操作</span></a><span class="date">2015-02-16</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">年月日时分秒 转为 时间戳</a>    <ul>
+      <li><a href="#shell">shell</a></li>
+      <li><a href="#python">python</a></li>
+      <li><a href="#cc">c/c++</a></li>
+      <li><a href="#golang">golang</a></li>
+      <li><a href="#lua">lua</a></li>
+      <li><a href="#java">java</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-1">时间戳转年月日时分秒</a>    <ul>
+      <li><a href="#shell-1">shell</a></li>
+      <li><a href="#python-1">python</a></li>
+      <li><a href="#cc-1">c/c++</a></li>
+      <li><a href="#golang-1">golang</a></li>
+      <li><a href="#lua-1">lua</a></li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>最近在编码过程中，经常有时间的操作，主要的是年月日时分秒 与 秒 的转化。</p>
+</blockquote>
+
+<h2 id="section">年月日时分秒 转为 时间戳</h2>
+<p>说明，在文档中，默认的时间格式为 “YYYY-mm-dd HH:MM:ss”，秒为本地的秒数；如果是标准秒数会明确标识出来。    </p>
+
+<h3 id="shell">shell</h3>
+
+<p>$ date +%s
+    $ date -d “2015-02-16 15:12:28” +%s
+    $ date –date=”1 hour ago” +%s</p>
+
+<h3 id="python">python</h3>
+
+<pre><code>#!/usr/bin/python
+import time
+
+# time.time() 1970纪元后经过的浮点秒数
+print str(time.time()).split('.')[0] # 所以想只要整数型秒数，就去掉.后面
+
+struct_time = time.strptime("2015-02-16 15:12:28","%Y-%m-%d %H:%M:%S")
+print str(time.mktime(struct_time)).split('.')[0]
+</code></pre>
+
+<h3 id="cc">c/c++</h3>
+
+<pre><code>#include &lt;sys/time.h&gt;   
+
+// 获取当前时间的毫秒数
+long currentMsec() {
+struct timeval tv; 
+gettimeofday(&amp;tv,NULL);
+return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+// return tv.tv_sec;  // 获取秒数
+}
+
+// "2015-02-16 15:12:28" 转为秒数
+long getSec(const char *date_str) { // 最好再有对date_str的检查！
+    struct tm time;
+    memset(&amp;tim, 0, sizeof(time));  // 要清0
+    strptime(date_str, "%Y-%m-%d %H:%M:%S", &amp;time);
+    //time_t loctime = mktime(&amp;time);
+    return (long)mktime(&amp;time);
+}
+</code></pre>
+
+<p>最好看看几个结构体，<code>tm</code> 、 <code>timeval</code> 、 <code>time_t</code></p>
+
+<h3 id="golang">golang</h3>
+
+<pre><code>package main
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    print time.Now().Unix()  // 当前时间戳(秒)
+    // str 转为时间戳 -- 比较麻烦
+    the_time := time.Date(2015, 2, 16, 15, 12, 28, 0, time.Local)
+    unix_time := the_time.Unix()
+    fmt.Println(unix_time)
+    
+    // 
+    the_time, err := time.Parse("2006-01-02 15:04:05", "2014-01-08 09:04:41")
+    if err == nil {
+    unix_time := the_time.Unix()
+    fmt.Println(unix_time)     
+    }
+}
+</code></pre>
+
+<p>后面的例子参考 <a href="http://my.oschina.net/1123581321/blog/190942" target="_blank">golang – 时间日期总结</a>。</p>
+
+<h3 id="lua">lua</h3>
+
+<p>lua中可以使用 <code>time = os.time(tab)</code>的方式由年月日转为时间戳，这要就必须生成好 table。
+下面例子中 <code>isdst</code> 表示是否是夏令时。</p>
+
+<pre><code>print (os.time())  -- 当前时间戳
+local dayres = os.time({day=16,month=2,year=2015,hour=15,min=12,sec=28,isdst=false}) -- 年月日-&gt; 时间戳
+</code></pre>
+
+<h3 id="java">java</h3>
+
+<p>暂无 :)</p>
+
+<h2 id="section-1">时间戳转年月日时分秒</h2>
+
+<h3 id="shell-1">shell</h3>
+
+<pre><code>date "+%Y-%m-%d %H:%M:%S"
+date -d @1424070748  "+%Y-%m-%d %H:%M:%S"  
+</code></pre>
+
+<h3 id="python-1">python</h3>
+
+<pre><code>import datetime
+import time
+
+timeStr = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())) 
+print timeStr
+
+ltime=time.localtime(1424070748)
+timeStr=time.strftime("%Y-%m-%d %H:%M:%S", ltime)
+print timeStr   
+</code></pre>
+
+<h3 id="cc-1">c/c++</h3>
+
+<pre><code>#include &lt;sys/time.h&gt;
+
+void smp2date(long timestamp) { // 1424070748
+    //time_t lt= time(NULL); // 当前时间
+    time_t lt = timestamp; 
+    
+    // 比较啰嗦
+    tm *t1 = localtime(&amp;lt);
+    cout &lt;&lt; t1-&gt;tm_year+1900 &lt;&lt; "-" &lt;&lt; t1-&gt;tm_month + 1 &lt;&lt; t1-&gt;tm_day &lt;&lt; endl;      
+    // tm *t2 = gmtime(&amp;lt); // 世界标准时间
+    
+    char * date = new char[20];
+    strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&amp;t1));
+    // date  即是
+}   
+</code></pre>
+
+<h3 id="golang-1">golang</h3>
+
+<pre><code>package main
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    fmt.Println(time.Now().Format("2006-01-02 15:04:05"))   // 当前时间戳
+    
+    str_time := time.Unix(1424070748, 0).Format("2006-01-02 15:04:05")
+    fmt.Println(str_time)
+}
+</code></pre>
+
+<h3 id="lua-1">lua</h3>
+
+<pre><code>print(os.date("%Y-%m-%d %H:%M:%S"))  // 当前时间戳
+print(os.date("%Y-%m-%d %H:%M:%S", 1424070748))
+</code></pre>
+
+</div>
+        <div class="more text-right"><a href="/2015/02/16/%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/01/20/hbase%E6%93%8D%E4%BD%9C%E7%AC%94%E8%AE%B0.html"><span class="title">Hbase操作笔记</span></a><span class="date">2015-01-20</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#hbase">hbase环境搭建</a>    <ul>
+      <li><a href="#standalone">standalone</a></li>
+      <li><a href="#section">集群</a></li>
+    </ul>
+  </li>
+  <li><a href="#hbase-">访问hbase 的操作</a>    <ul>
+      <li><a href="#go--hbase">go 访问 hbase</a></li>
+      <li><a href="#python--hbase">python 访问 hbase</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-1">其他</a></li>
+</ul>
+
+<blockquote>
+  <p>本文记录从1月13号到1月20号这接近一周时间内一些工作以及遇到的问题，涉及hbase环境的搭建，到 go 语言使用 thrift 操作 hbase，python访问hbase，以及一些琐碎的知识点。</p>
+</blockquote>
+
+<h2 id="hbase">hbase环境搭建</h2>
+
+<p>要开发就要有测试，要测试就要有测试环境。先搭建个 hbase 的环境，没有想到单单一个 standalone 的环境就用了 NN 久的时间。</p>
+
+<h3 id="standalone">standalone</h3>
+
+<pre><code>$ tar xzf hbase-0.94.26-bin.tar.gz
+$ ln -s hbase-0.94.26 default
+$ cat default/conf/hbase-site.xml
+&lt;configuration&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;file:///data/hbase&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+    &lt;value&gt;/data/zookeeper&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+$ ./default/bin/start-hbase.sh
+starting master, logging to /home/hbase/default/bin/../logs/hbase-master-ubuntu.out
+$ ps ax | grep hbase
+// 进程没有了   
+</code></pre>
+
+<p>根据网上的说明，修改 /etc/host</p>
+
+<pre><code>127.0.0.1   localhost
+127.0.0.1   ubuntu
+</code></pre>
+
+<p>重新执行 <code>start-hbase.sh</code> 仍然没有启动。
+而如果换成用 root   权限或 sudo 来执行，就好了</p>
+
+<pre><code>$ sudo ./start-hbase.sh 
+</code></pre>
+
+<h3 id="section">集群</h3>
+
+<p>standalone只是一个初始，集群环境才是我们想要的。这个网上的资料就很多了，还有点需要注意 hdfs 和 hbase 的版本兼容没有问题。<br />
+以后使用多了，当整理一篇关于hbase配置的文章。我在安装时，应为 zookeeper 的配置问题，浪费了一些时间。是这样的：
+zoo.cfg 中定义zookeeper集群的 多个node，以及 dataLogDir，那就需要在 <code>dataLogDir</code> 目录下建一个 myid 文件，文件的内容为 zoo.cfg 对应的server.id中的id</p>
+
+<p>关于hbase，参考 <a href="http://hbase.apache.org/book.html#quickstart" target="_blank">官方文档</a> 或  <a href="http://abloz.com/hbase/book.html" target="_blank">中文版</a>，
+而但就安装而言，我觉得博客 <a href="http://linuxjcq.blog.51cto.com/3042600/760634/" target="_blank">Hbase安装配置（含分布式ZooKeeper）</a>是比较清晰的。</p>
+
+<h2 id="hbase-">访问hbase 的操作</h2>
+
+<h3 id="go--hbase">go 访问 hbase</h3>
+
+<p>这个项目是使用hbase来存放要查询的设备id，而为了达到实时计算的目的，使用 heka  插件了进行，为此使用 go 通过 thrift 来操作 hbase。
+文冠的博客 <a href="http://blog.kissdata.com/2014/08/04/golang-thrift-hbase.html" target="_blank">golang通过thrift操作Hbase</a>就是做这个介绍的。
+其实得到的结果是，thrift上和hbase集群使用了相同的配置，启动后就能直接访问hbase了。
+这样，在实际的操作过程中，就是thrift的接口。</p>
+
+<pre><code>$ ./hbase thrift2 -p 9090 start
+</code></pre>
+
+<p>列举go 访问hbase 的几个关键代码点</p>
+
+<pre><code>import  git.apache.org/thrift.git/lib/go/thrift
+
+hbaseThriftTrans, hbaseThriftClient, err := hbase.HbaseOpenThriftConnection(mj.hbaseHost, mj.hbasePort);
+
+tput := &amp;hbase.TPut{
+    Row: rowKey,
+    ColumnValues: []*hbase.TColumnValue{
+        &amp;hbase.TColumnValue{
+            Family:    tableCF,
+            Qualifier: qualifier,
+            Value:     rowValue,
+        },
+    },
+}
+err = thriftClient.Put(table, tput)
+
+hbase.HbaseCloseThriftConnection(hbaseThriftTrans)
+</code></pre>
+
+<h3 id="python--hbase">python 访问 hbase</h3>
+
+<p>如  ablozhou 在 <a href="http://abloz.com/2012/06/01/python-operating-hbase-thrift-to.html" target="_blank">python通过thrift来操作hbase</a> 所说的: <br />
+hbase用java来操作是最方便，也效率最高的方式。但java并非轻量级，不方便在任何环境下调试。而且不同的开发人员熟悉的语言不一样，开发效率也不一样。
+hbase 通过thrift，还可以用python,ruby,cpp,perl等语言来操作</p>
+
+<p>python操作的过程也是比较简单，编码时参考 <a href="http://blog.csdn.net/aylazhang/article/details/8563895" target="_blank">php/perl/python , 通过thrift 连接 hbase，进行条件过滤选择</a>，但是，同样的也是遇到了一个问题，</p>
+
+<pre><code>invalid method name: 'scanneropenwithscan'
+</code></pre>
+
+<p>thrift server端启动的时候，不要用 thrift2，而是thrift，就没有这个问题了。
+而go 访问 hbase的使用要使用的thrift2，目前用的解决办法是在不同的机器上分别启动对应服务。</p>
+
+<h2 id="section-1">其他</h2>
+
+<p>1、python 连接redis使用的密码</p>
+
+<pre><code>redis.Redis(host='localhost', port=6379, db=0, password=None, socket_timeout=None, connection_pool=None, charset='utf-8', errors='strict', unix_socket_path=None)
+</code></pre>
+
+<p>使用    <code>password</code> 而不是 <code>auth</code>。</p>
+
+<p>2、hbase shell 清空表中数据</p>
+
+<pre><code>hbase(main)&gt; truncate 't1'
+</code></pre>
+
+<p>可多看看 <a href="http://www.cnblogs.com/nexiyi/p/hbase_shell.html" target="_blank">HBase 常用Shell命令</a></p>
+
+<p>3、java访问hbase</p>
+
+<p>花了半天做了尝试，结果没有成功。 BAD！</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/01/20/hbase%E6%93%8D%E4%BD%9C%E7%AC%94%E8%AE%B0.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/01/08/Heka%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.html"><span class="title">Heka问题总结</span></a><span class="date">2015-01-08</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#heka-">heka 插件问题定位</a></li>
+  <li><a href="#packs-have-been-idle-more-than-120-seconds">100 packs have been idle more than 120 seconds</a></li>
+  <li><a href="#section">非法宕机</a></li>
+</ul>
+
+<blockquote>
+  <p>Heka在使用的过程零星的遇到些问题，在此处记录下来，以后再有问题也会逐步添加</p>
+</blockquote>
+
+<h3 id="heka-">heka 插件问题定位</h3>
+
+<p>在Heka插件运行时，遇到错误多会就直接退出，并输出很多的错误信息，而这些错误信息很有帮助，几乎可以直接定位到时哪行出现的问题</p>
+
+<pre><code>panic: runtime error: invalid memory address or nil pointer dereference
+[signal 0xb code=0x1 addr=0x0 pc=0x5602ca]
+
+goroutine 16 [running]:
+runtime.panic(0xb78b00, 0x120fa53)
+/usr/local/go/src/pkg/runtime/panic.c:279 +0xf5
+git.hub.net/xxxx/heka_plugins/mjhbase.(*RealHbasePushOutput).testThriftConnection(0xc208029500, 0x0, 0x0)
+/home/work/heka/build/heka/src/git.hub.net/vincentzhwg/heka_plugins/mjhbase/real_hbase_push_output.go:479 +0x2fa
+git.hub.net/xxxx/heka_plugins/mjhbase.(*RealHbasePushOutput).Init(0xc208029500, 0x9d2420, 0xc2080cc840, 0x0, 0x0)
+/home/work/heka/build/heka/src/git.hub.net/vincentzhwg/heka_plugins/mjhbase/real_hbase_push_output.go:509 +0x13f
+...
+</code></pre>
+
+<p>已经有很明显的提示，real_hbase_push_output.go 的 479行有错误，有个变量未初始化，于是定位到问题这行</p>
+
+<pre><code>c, err = redis.Dial("tcp", mj.RedisServer)
+</code></pre>
+
+<p>仔细翻阅代码，原来是拼写错误，应该是</p>
+
+<pre><code>c, err = redis.Dial("tcp", mj.redisServer)      
+</code></pre>
+
+<h3 id="packs-have-been-idle-more-than-120-seconds">100 packs have been idle more than 120 seconds</h3>
+
+<p>同样的程序和配置，在另外三台上运行都很正常，而在其中的一台上运行就有如下的问题：</p>
+
+<pre><code>Diagnostics: 100 packs have been idle more than 120 seconds.
+Diagnostics: (input) Plugin names and quantities found on idle packs:
+Diagnostics:       xxxx: 100
+</code></pre>
+
+<p>搜到 <a href="https://github.com/mozilla-services/heka/issues/1228" target="_blank">heka-1228</a>，
+说有死锁，可通过修改 <code>plugin_chansize</code> 或  <code>maxprocs</code> 配置来调整，试了下不成功。<br />
+<a href="https://mail.mozilla.org/pipermail/heka/2014-January/000058.html" target="_blank">heka error with Diagnostics</a>中说到:
+input 中的 idle packs 绝大多数是output中缺少 <code>Recycle()</code> 导致的。</p>
+
+<p>重新检查output插件的代码，发现有个地方少用了，添加上之后，ok了！</p>
+
+<pre><code>err = json.Unmarshal([]byte(*pack.Message.Payload), &amp;pushMessage)
+if err != nil {
+    pack.Recycle()  // 此处缺少！！
+    continue
+}  
+...
+err = json.Unmarshal([]byte(*pack.Message.Payload), &amp;pushMessage3)
+pack.Recycle()
+...
+</code></pre>
+
+<p>需要注意下，有个地方不需要执行pack.Recycle()</p>
+
+<pre><code>select {
+case pack, ok = &lt;-inChan:
+if !ok {
+    // pack.Recycle()  // !!! not need REcycle here!
+    break
+}   
+</code></pre>
+
+<p>补充<br />
+最近也遇到一个类似的情景，停止的原因不是缺少 output 中一些地方少了 <code>pack.Recycle()</code>。
+仔细看日志，能看到 output 插件的进程已经停止了，原来是有这样的一个bug：</p>
+
+<pre><code>ok := true
+for ok {
+    select {
+    case pack, ok = &lt;-inChan:
+        if !ok {
+            break
+        }   
+        ...
+        if appid, ok = appdict[id]; ok {
+        ...
+</code></pre>
+
+<p>在循环里面有别的判断条件使用也使用了 <code>ok</code> 变量，结果可想而知，当里面 ok 为false了，到了for循环处就退出了。   </p>
+
+<h3 id="section">非法宕机</h3>
+
+<p>一次机器被运维误关机，heka在启动时出错：</p>
+
+<pre><code>Plugin 'log_tcp_output' error: StreamOutput stopped: can't get record: can't unmarshal record: proto: wrong 
+Plugin 'log_tcp_output' error: can't get record: can't unmarshal record: proto: wrong wireType = 4 for field Payload
+Plugin 'log_tcp_output': stopped
+Plugin 'log_tcp_output': has stopped, shutting down.
+</code></pre>
+
+<p>开始以为是 proto 不支持的问题，多次尝试后，原来是heka非法退出，base_dir/output中的一些偏移发生错误。
+将base_dir/output中的文件给修复，就好了。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/01/08/Heka%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/01/07/redis%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA.html"><span class="title">Redis服务搭建</span></a><span class="date">2015-01-07</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#redis">redis集群</a></li>
+  <li><a href="#section">主从备份</a></li>
+  <li><a href="#twemproxy">Twemproxy</a></li>
+  <li><a href="#section-1">访问权限</a></li>
+</ul>
+
+<p>如果只是简单的启动一个redis服务，直接使用redis-server命令就好了。这儿主要是想探讨下搭建可靠与安全的redis服务。
+<a href="http://blog.woshifengzi.com/2015/11/13/codis.html" target="_blank">More about Codis</a></p>
+
+<h3 id="redis">redis集群</h3>
+<p>期待已久的redis 3.0 版本终于还是没有稳定版，但是已经有了 unstable 的分支可以搭建个集群使用。
+<a href="http://redisdoc.com/topic/cluster-tutorial.htm" target="_blank">redis的官网文档 集群教程</a> 比较详细的描述了配置和使用redis集群。 
+关于配置redis集群可以简单的描述为如下：</p>
+
+<p>设定配置文件(./redis.conf)，重点是允许使用集群 <code>cluster-enabled yes</code></p>
+
+<pre><code>port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+</code></pre>
+
+<p>启动多个这个的节点，如端口依次是 7000,7001,7002</p>
+
+<pre><code>/path/to/redis-server ./redis.conf
+</code></pre>
+
+<p>然后使用命令启动集群：</p>
+
+<pre><code>./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002    
+</code></pre>
+
+<p>李万川在<a href="wiki.mjyun.com/index.php/Redis" target="_blank">摩羯wiki</a>上有关于创建的介绍说明。当然更加详细的说明还是看看官网上的介绍！</p>
+
+<p>但不管怎么说，这个版本还是unstable版本，不建议直接用在线上环境。
+补充一点，这样的集群中其实也是两个节点之间有主、从关系。如果相应的主从都挂掉了，数据也就无法访问了。</p>
+
+<h3 id="section">主从备份</h3>
+
+<p>不想memcache，redis本身就可以内容写回磁盘，通过好的配置，定期向磁盘写回数据，机器redis进程挂掉、服务器挂掉，重启后依然可以正常服务。<br />
+但是如果磁盘也损坏了，或者对数据的要求很高，在重启服务这段时间不能访问会带来很严重的影响。这种情况下就可以采用主从备份。<br />
+搭建过程参考<a href="http://redisdoc.com/topic/replication.html" target="_blank">redis的复制</a>。</p>
+
+<p>线上机器确实也搭建了主从服务，但是主服务一直没有宕掉过，也就没有机会体验下主从快速切换的惊心动魄。
+但是有了主从之后，确实也带来了一个好处，就是对外部的一些服务查询，直接使用从服务器，减少了主服务的压力，不知道这样设计是否有不妥之处。</p>
+
+<h3 id="twemproxy">Twemproxy</h3>
+
+<p>如果不只是简单的主从，又想使用redis的集群，而感觉unstable又不是那么放心，那么通过 Proxy 的方式来实现存储集群就是比较好的选择了，
+常见即是twitter的<a href="https://github.com/twitter/twemproxy" target="_blank">Twemproxy</a>。</p>
+
+<p>twemproxy的安装过程不在介绍，可以参考<a href="http://www.cnblogs.com/haoxinyue/p/redis.html" target="_blank">基于Twemproxy的Redis集群方案</a>。</p>
+
+<pre><code>./twemproxy -c twemproxy.xml -d -v 4 -s 51002 -p twemproxy.pid -o twemproxy.log
+</code></pre>
+
+<p>我们线上实现时，twemproxy只是做一个代理，请求key会根据hash分到不同的redis节点上，这样会带来一个问题：如果某个节点过了，在启动前，上面的数据也就访问不到了。<br />
+关于其优缺点参考 <a href="http://blog.csdn.net/hguisu/article/details/9174459" target="_blank">Redis 代理服务Twemproxy</a></p>
+
+<h3 id="section-1">访问权限</h3>
+
+<p>从安全角度来讲，redis不能知道端口就能访问，特别是有外网的情况，所以就要设置访问密码。只用是在配置文件中添加，如：</p>
+
+<pre><code>requirepass "password"
+</code></pre>
+
+<p>还可以在redis的交互式命令行下添加，如</p>
+
+<pre><code>&gt; config set requirepass password   
+</code></pre>
+
+</div>
+        <div class="more text-right"><a href="/2015/01/07/redis%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/01/07/go%E8%AF%AD%E8%A8%80%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.html"><span class="title">Go语言问题总结</span></a><span class="date">2015-01-07</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#panic-runtime-error-index-out-of-range">panic: runtime error: index out of range</a></li>
+</ul>
+
+<h3 id="panic-runtime-error-index-out-of-range">panic: runtime error: index out of range</h3>
+
+<p>在用heka操作redis的时候，报这样的错误：</p>
+
+<pre><code>panic: runtime error: index out of range
+
+goroutine 48 [running]:
+runtime.panic(0xae42e0, 0x11284fc)
+    /usr/local/go/src/pkg/runtime/panic.c:279 +0xf5
+git.hub.net/xxx/heka_plugins/kptj.(*KptjHistoryRedisOutput).Run(0xc2080be600, 0x7f43e5600840, 0xc2080ec000, 0x7f43e56008f8, 0xc20807a000, 0x0, 0x0)
+    /home/work/heka/build/heka/src/git.hub.net/vincentzhwg/heka_plugins/kptj/history_redis_output.go:178 +0x1b0c
+github.com/mozilla-services/heka/pipeline.(*foRunner).Starter(0xc2080ec000, 0x7f43e56008f8, 0xc20807a000, 0xc2080f02c0)
+    /home/work/heka/build/heka/src/github.com/mozilla-services/heka/pipeline/plugin_runners.go:631 +0x73e
+created by github.com/mozilla-services/heka/pipeline.(*foRunner).Start
+    /home/work/heka/build/heka/src/github.com/mozilla-services/heka/pipeline/plugin_runners.go:530 +0x543
+
+goroutine 16 [chan receive]:
+github.com/mozilla-services/heka/pipeline.Run(0xc20807a000)
+    /home/work/heka/build/heka/src/github.com/mozilla-services/heka/pipeline/pipeline_runner.go:268 +0x1007
+main.main()
+    /home/work/heka/build/heka/src/github.com/mozilla-services/heka/cmd/hekad/main.go:190 +0xf64
+</code></pre>
+
+<p>在网上看到： <a href="http://www.cnblogs.com/ghj1976/archive/2013/02/17/2914646.html" target="_blank">Go语言中的数组（array）和数组切片（slice）</a>，主要是使用数组或数组切片越界导致的。
+查看自己的代码，将使用切片的地方都加上判断，发现可以了。最后的问题定位在这样的一段代码处：</p>
+
+<pre><code>conn := this.RedisPool.Get()
+strs, err := redis.Strings(conn.Do("KEYS", keyPre))
+conn.Close()
+
+if err != nil {
+    fmt.Println("collate err:", err)
+} else {
+    for _, s := range strs {
+    ...
+}
+</code></pre>
+
+<p>如果是redis中的key为空，err未必就非nil，于是加上对strs长度的判断，即</p>
+
+<pre><code>    ...
+    if err != nil || len(strs) &lt;= 0{
+        ...
+    } else {
+        ..
+    }
+</code></pre>
+
+<p>问题得到解决。这个过程可以知道两点：
+* go 代码的 index out of range 错误，很可能是数组或切片的越界访问导致的
+* 与redis、mysql、mongodb操作的返回时，不能简单的通过返回err是否为nil来判断！</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/01/07/go%E8%AF%AD%E8%A8%80%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2015/01/06/%E6%9C%80%E8%BF%91%E7%9C%8B%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B9%A6.html"><span class="title">最近看的一些书</span></a><span class="date">2015-01-06</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">代码大全</a></li>
+  <li><a href="#section-1">淘宝技术这十年</a></li>
+  <li><a href="#section-2">画家与黑客</a></li>
+  <li><a href="#section-3">编程珠玑</a></li>
+  <li><a href="#section-4">统计陷阱</a></li>
+</ul>
+
+<h3 id="section">代码大全</h3>
+<p>2014-12-10<br />
+从头到尾看完了一遍，现在回头想想：严格规范每一步，习惯成自然，多自己的实践 。。。
+找时间在看一遍，做好笔记</p>
+
+<h3 id="section-1">淘宝技术这十年</h3>
+<p>2014-12-20<br />
+看到了淘宝的疯狂，也看到了随着公司成长起来的牛人，多隆，行颠 。。。 还特意搜索了下多隆</p>
+
+<h3 id="section-2">画家与黑客</h3>
+<p>2015-01-06<br />
+书老了但是思想不老。里面关于学生、创业、编程语言等，都很有启迪！</p>
+
+<h3 id="section-3">编程珠玑</h3>
+<p>2015-10-20
+已经是第二遍看了，书内容已经压缩了，每个地方都是一些总结。</p>
+
+<h3 id="section-4">统计陷阱</h3>
+<p>2015-10-21
+从编程珠玑上引申的。对宣传的甚至是常见的一些统计说法，都需要反思了。</p>
+
+</div>
+        <div class="more text-right"><a href="/2015/01/06/%E6%9C%80%E8%BF%91%E7%9C%8B%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B9%A6.html">继续阅读全文</a></div>
+    </div>
+    
+    <div class="post-card">
+        <div class="head"><a href="/2014/12/26/Heka%E6%8F%92%E4%BB%B6%E7%9A%84%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0.html"><span class="title">Heka插件的开发笔记</span></a><span class="date">2014-12-26</span></div>
+        <div class="content"><ul id="markdown-toc">
+  <li><a href="#section">背景</a></li>
+  <li><a href="#section-1">基本规则</a>    <ul>
+      <li><a href="#section-2">初始化操作</a></li>
+      <li><a href="#section-3">关于配置</a></li>
+      <li><a href="#section-4">注册</a></li>
+      <li><a href="#section-5">补充</a></li>
+    </ul>
+  </li>
+  <li><a href="#logstreamerinput">logstreamer_input过程</a>    <ul>
+      <li><a href="#section-6">配置、结构体部分</a></li>
+      <li><a href="#section-7">运行</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-8">其他插件</a>    <ul>
+      <li><a href="#decoder">decoder</a></li>
+      <li><a href="#encoder">encoder</a></li>
+      <li><a href="#output">output</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-9">后续计划</a></li>
+</ul>
+
+<h2 id="section">背景</h2>
+
+<p>Push 想实现精准推送的功能，这就需要统计的数据来实现。而之前的日志格式和统一后的日志格式不兼容，为此做一个格式转化功能：将Json格式转为 <code>^B</code> 分隔的日志。 
+在转的过程中，Heka与Redis结合，实现实时统计的功能，并将转化好之后的日志落地。<br />
+本文中的插件的开发使用go语言。</p>
+
+<h2 id="section-1">基本规则</h2>
+
+<p>实现一个插件，首先是一些基本的初始化操作，再有需要实现几个基本的接口，即配置方面操作和注册操作。</p>
+
+<h3 id="section-2">初始化操作</h3>
+<p>Heka插件接口定义了初始化的操作，如下：</p>
+
+<pre><code>type Plugin interface {
+    Init(config interface{}) error
+}
+</code></pre>
+
+<p>例如一个最简单的例子，我们实现一个 <code>SimpleOutput</code> 的插件，初始化时，不需要做任何工作，则可以如下：</p>
+
+<pre><code>type SimpleOutput struct {
+}
+
+func (this *Push2KpOutput) Init(config interface{}) (err error) {
+    return
+}
+</code></pre>
+
+<h3 id="section-3">关于配置</h3>
+
+<p>从<a href="https://hekad.readthedocs.org/en/latest/developing/plugin.html" target="_blank">官网文档</a> 的 Custom Plugin Config Structs 知道，
+<code>HasConfigStruct</code>接口只有 <code>ConfigStruct</code> 的方法。假设一个简单的插件，不需要指定任何的配置，则如下</p>
+
+<pre><code>type SimpleOutputConfig struct {
+}
+
+func (this *SimpleOutput) ConfigStruct() interface{} {
+    return &amp;SimpleOutputConfig{}
+}
+</code></pre>
+
+<h3 id="section-4">注册</h3>
+<p>关于功能实现的部分后面在作介绍。在使用该插件前还有步重要的操作，即注册该插件。开始没有注册时，曾遇到提示</p>
+
+<pre><code>No registered plugin type: SimpleOutput
+</code></pre>
+
+<p>而注册插件只需要调用RegisterPlugin方法即可，官网也推荐在init函数中实现，即如下：</p>
+
+<pre><code>func init() {
+    RegisterPlugin("SimpleOutput", func() interface{} {
+        return new(SimpleOutput)
+    })
+}
+</code></pre>
+
+<h3 id="section-5">补充</h3>
+
+<p>此处说明的是对插件的开发中的一些过程，<a href="http://blog.woshifengzi.com/2014/12/09/Heka%E4%BD%BF%E7%94%A8%E5%AD%A6%E4%B9%A0.html">Heka使用学习</a>中的 <code>添加插件</code>部分的说明，更应该最开始的第一步操作。  </p>
+
+<pre><code>$ cmake/plugin_loader.cmake
+add_external_plugin(svn https://url_to/heka_plugins/simple:local)
+
+$ ls externals/simple/simple_output.go
+</code></pre>
+
+<p>要新增加的插件在配置的目录下。</p>
+
+<p>测试时还有一点浪费了一些时间，即配置文件中output的MessageMatcher先设成TRUE，让第一步的测试能看到结果，</p>
+
+<pre><code>[Simple_output]
+type = "SimpleOutput"
+message_matcher = "TRUE"
+</code></pre>
+
+<h2 id="logstreamerinput">logstreamer_input过程</h2>
+
+<p>heka提供了很多的插件样例，而了解了其中一个，也就可以融汇贯通，了解其他样例，开发新的插件也就没有什么问题了。<br />
+在实际开发的过程中使用了logstreamer的例子，此处即是此插件的一些笔记。</p>
+
+<h3 id="section-6">配置、结构体部分</h3>
+
+<p>看每个结构体中定义的变量，了解这些变量的用途以及必要性。<br />
+LogstreamerInputConfig结构体的内容，确定每</p>
+
+<pre><code>生成日志文件信息对象使用，hekad/config.go定义，HekadConfig结构体变量
+Hostname string 
+
+存放日志的基本路径
+LogDirectory  `toml:"log_directory"`
+
+存放Heka处理过程的路径，如处理到哪个文件的seek是多少了
+JournalDirectory
+
+文件名称匹配，如file_match = '(?P&lt;Year&gt;\d{4})(?P&lt;Month&gt;\d{2})/(?P&lt;Day&gt;\d{2})/(?P&lt;Hour&gt;\d{2})/\w+_\d{10}\.log'
+FileMatch `toml:"file_match"`
+
+文件匹配时的优先级，如 priority = ["Year", "Month", "Day", "Hour"]，就会按照我们设定的年月日时先后顺序读取文件
+Priority []string
+
+分开不同结果。比如源头有两种游戏，gameA、gameB，希望生成不同的名称，differentiator = ["gameA"]
+Differentiator []string
+
+对于接受到的日志，会有些日志认为太旧就过滤掉了。使用OldestDuration来限定过滤规则
+OldestDuration string `toml:"oldest_duration"`
+
+多久扫描一次，如有新的日志就继续前进
+RescanInterval 
+
+得到日志使用解码
+Decoder
+
+将日志文件分解为message所用到的格式，常用 message.proto
+ParserType
+
+指定日志所用的分隔符，如 '\n'
+Delimiter
+
+指定分隔符的位置，是开头还是结尾
+DelimiterLocation
+
+如果日志超过buffer的大小会截断，这些截断的是否丢弃
+KeepTruncatedMessages
+</code></pre>
+
+<p>上面是关于配置文件所用变量的定义，插件类（LogstreamerInput）本身也有一些变量，如</p>
+
+<pre><code>// 封装整个heka/pipeline配置的主要对象 pipeline/config.go中定义，
+pConfig      *p.PipelineConfig  
+
+// 关于log流的集合，logstreamer/filehandling.go中定义
+// 定义有rescanInterval/oldestDuration/logstreams
+logstreamSet *ls.LogstreamSet
+
+logstreamSetLock sync.RWMutex
+
+rescanInterval   time.Duration
+
+// 在一个配置文件中，可能会在多个地方使用这个插件，所以用一个map来存放
+plugins   map[string]*LogstreamInput
+
+// 看到[]chan chan bool 这个类型，先就蒙了
+// channel是原生值，即可以通过channel发送
+// 定义个渠道的数组，里面传递也是渠道，而这些里面的渠道传递的是bool
+// 因为plugins中可能有多个，所以stop的信息也就有多个了  --&gt; 还有疑问
+stopLogstreamChans  []chan chan bool
+
+// ??
+stopChan        chan bool
+
+// 解码名称
+decoderName     string
+// 处理
+parser              string
+
+// 关于分隔符的信息
+delimiter           string
+delimiterLocation   string 
+
+hostName            string
+pluginName      string
+keepTruncatedMessages       bool
+</code></pre>
+
+<p>Init函数基本就是初始化或配置上面的这些变量了</p>
+
+<h3 id="section-7">运行</h3>
+<p>LogstreamerInput 插件的主要功能是将日志流的入端，日志都按照一定的命名规则按照文件来存放。
+所以该插件会扫描这件日志文件，当有满足条件的日志到来时，就会导成流进入到Heka的处理过程中。</p>
+
+<p>此过程的几个知识点</p>
+
+<ul>
+  <li>
+    <p>扫描日志文件顺序
+按照我们配置所指定的优先级先后扫面日志文件，而且处理每个日志文件时都会记录偏移量，保证不重复，且利于日志的追加。<br />
+例子可参考上面代码中 年月日时，<code>priority = ["Year", "Month", "Day", "Hour"]</code>。<br />
+这些优先级是如何实现的，使用了heka的机制。</p>
+  </li>
+  <li>
+    <p>定时扫描
+直接看一段扫描处理过程的简要代码，即可明白。</p>
+
+    <p>rescan := time.Tick(li.rescanInterval)
+  for ok {
+      select {
+          case &lt;-li.stopChan:
+              ok = false
+              … 
+              close(li.stopChan)
+          case &lt;-rescan:
+              li.logstreamSetLock.Lock()
+              …
+              li.logstreamSetLock.Unlock() 
+      }
+  }</p>
+  </li>
+</ul>
+
+<p>这个过程中 stopChan的数据（信号）是如何得到的呢？使用了Heka默认的 <code>Stop</code>函数</p>
+
+<pre><code>func (li *LogstreamerInput) Stop() {
+    li.stopChan &lt;- true
+    &lt;-li.stopChan
+}
+</code></pre>
+
+<ul>
+  <li>
+    <p>扫描</p>
+
+    <p>扫描实际上用的是<code>LogstreamInput</code>的 Run方法！
+  &lt;待继续研究！&gt;</p>
+  </li>
+</ul>
+
+<h2 id="section-8">其他插件</h2>
+
+<h3 id="decoder">decoder</h3>
+<p>例如将一个json格式的数据转为以 <code>^B</code> 分隔的日志，可使用decoder的插件来实现，大体过程如下：</p>
+
+<pre><code>// Heka will call this to give us access to the runner.
+func (mj *MJPushDecoder) SetDecoderRunner(dr DecoderRunner) {
+    mj.dRunner = dr
+}
+
+// 此处定义json的格式
+type BodyInfo struct {
+    。。。
+}
+type PushMessage struct {
+    Event_id int
+    Body     BodyInfo
+}
+
+func (mj *MJPushDecoder) Decode(pack *PipelinePack) (packs []*PipelinePack, err error) {
+    // 做json解析
+    pushMessage := PushMessage{}
+    e = json.Unmarshal([]byte(*pack.Message.Payload), &amp;pushMessage)
+    if  e != nil {
+        fmt.Println(err)
+        return
+    }
+
+    var bf bytes.Buffer
+    bf.WriteString(time.Unix(int64(server_time),0).Format("2006-01-02T15:04:05+08:00"))
+    bf.WriteByte('\x02')
+    // 1 : IP
+    bf.WriteString(pushMessage.Body.Ip)
+    ....
+    bf.WriteByte('\n')  // 配置接收端的encoder时， append_newlines = false
+
+    newPayload := bf.String()
+    pack.Message.Payload = &amp;newPayload
+    
+    packs = []*PipelinePack{pack}
+    return
+}
+func init() { ... }// 注册
+</code></pre>
+
+<p>注意，decoder得到的pack不需要调用 <code>pack.Recycle()</code>！</p>
+
+<h3 id="encoder">encoder</h3>
+<p>在实现的代码中，encoder与decoder非常的相似，就不在提供代码！</p>
+
+<h3 id="output">output</h3>
+
+<p>我们在使用output时，用到了两种类型，一是参考 <code>file_logstreamer_output</code> 插件的方式，将heka流出的数据落入到指定路径、命名下的文件中；一是使用Redis做一些实时计算！<br />
+前者的具体代码与logstreamer_output很近，但是添加了两点:<br />
+* 根据接受到的日志时间，落到对应的 年月日时的文件中，即 yyyymm/dd/hh/xxx_yyyymmddhh.log
+* 为了与其他代码兼容，在某日志文件10分钟没有日志流入时，生成一个 yyyymm/dd/hh.done 的文件，表示该时段的日志接受完成。</p>
+
+<p>使用redis做计算的代码大体如下：</p>
+
+<pre><code>import (
+    ...
+    "github.com/garyburd/redigo/redis"
+)
+func init() { ... } // 注册
+type RedisOutput struct {
+    RedisPool        *redis.Pool
+    redisServer      string
+    redisPassword    string
+    redisMaxIdle     int 
+    redisIdleTimeout int 
+    ...
+}
+func (o *RedisOutput) ConfigStruct() interface{} { ... } // 默认的构造函数
+
+func (o *KptjHistoryRedisOutput) initPool() (err error) {
+o.RedisPool = &amp;redis.Pool{
+    MaxIdle:     o.redisMaxIdle,
+    IdleTimeout: time.Duration(o.redisIdleTimeout) * time.Second,
+    Dial: func() (redis.Conn, error) {
+        c, err := redis.Dial("tcp", o.redisServer)
+        if err != nil {
+            return nil, err
+        }
+        if _, err := c.Do("AUTH", o.redisPassword); err != nil {
+            c.Close()
+            return nil, err
+        }
+        return c, err
+    },
+    TestOnBorrow: func(c redis.Conn, t time.Time) error {
+        _, err := c.Do("PING")
+        return err
+    },
+}
+
+// test connection
+conn := o.RedisPool.Get()
+if _, err = conn.Do("PING"); err != nil {
+    return
+}
+conn.Close()
+return
+}
+func (o *RedisOutput) Init(config interface{}) (err error) { ... }
+
+func (this *RedisOutput) Run(or OutputRunner, h PluginHelper) (err error) {
+    inChan := or.InChan()
+ok := true
+ for ok {
+    select {
+    case pack, ok = &lt;-inChan:
+        if !ok {
+            break
+        }
+        conn := this.RedisPool.Get()
+                    ...  // 相应的redis操作  如  conn.Send("INCR", allUuidNewKey)
+                    conn.Close()
+            } // select
+    } // end of for
+    return
+}
+</code></pre>
+
+<p>注： 可使用 <code>conn.Send("MULTI")</code>  <code>...</code>  <code>conn.Do("EXEC")</code> 来保证redis操作的原子性！</p>
+
+<h2 id="section-9">后续计划</h2>
+
+<p>阅读Heka的源代码，从 <code>cmd/hekad/main.go</code>做入口，既能更深入了解heka，也能好好的学习go语言！！</p>
+
+</div>
+        <div class="more text-right"><a href="/2014/12/26/Heka%E6%8F%92%E4%BB%B6%E7%9A%84%E5%BC%80%E5%8F%91%E7%AC%94%E8%AE%B0.html">继续阅读全文</a></div>
+    </div>
+    
+</div>
+
+<div class="nav-post-links">
+        
+        <span class="newer-posts-link">
+            
+                <a href="/page3" title="previous page">&laquo; Newer Posts</a>
+            
+        </span>
+        
+
+        
+        <span class="older-posts-link">
+            <a href="/page5" title="next page">Older Posts &raquo;</a>
+        </span>
+        
+</div>
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

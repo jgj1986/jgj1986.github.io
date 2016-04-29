@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Mqtt的使用 | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Mqtt的使用</div>
+        <div class="date">date: 2015-11-12</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#section">简单测试</a></li>
+  <li><a href="#nodemcu--emqtt">NodeMcu 使用 emqtt</a></li>
+</ul>
+
+<blockquote>
+  <p>mqtt隐然有成为物联网标准协议的趋势，计划使用mqtt做一些简单的测试。</p>
+</blockquote>
+
+<h2 id="section">简单测试</h2>
+
+<p>关于mqtt标准是怎么一回事，此处就不在赘述了。只是说一下个人理解，她只是个协议的标准，目前有比较多的实现版本。个人了解到的服务端实现起来比较困难，而客户端(client)则相对容易一些。</p>
+
+<p>更加基本说明，建议参考 <a href="http://www.hivemq.com/blog/mqtt-essentials/" target="_blank">MQTT Essentials</a>。</p>
+
+<p><a href="http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/" target="_blank">NodeMCU使用mqtt</a> 一文中，使用了介绍了使用使用开源的mqtt项目<a href="http://mosquitto.org/" target="_blank">mosquitto</a>做服务端，最近自己在阅读 <a href="https://github.com/emqtt/emqttd" target="_blank">emqttd</a>的一些源代码。做了如下一个测试，服务端用emqttd，客户端分别用 <a href="https://github.com/emqtt/emqttc" target="_blank">emqttc</a>和<a href="https://www.eclipse.org/paho/clients/python/">Paho Python Client</a>做客户端。</p>
+
+<p>使用emqttc中的simple_example.erl 和 Paho 示例的sub.py，修改其中的服务端，并且将Topic都改为 “TopicA”</p>
+
+<pre><code>$ ./sub.py
+TopicA 0 hello
+
+$ erl -pz /path/to/emqttc/ebin -pz /path/to/emqttc/deps/gen_logger/ebin
+&gt; c(simple_example).
+&gt; simple_example:start().
+</code></pre>
+
+<h2 id="nodemcu--emqtt">NodeMcu 使用 emqtt</h2>
+
+<p>copy了<a href="http://www.allaboutcircuits.com/projects/introduction-to-the-mqtt-protocol-on-nodemcu/" target="_blank">NodeMCU使用mqtt</a> 中的一些代码做测试，能验证整个服务可以打通。此处列出相关代码，应该没有版权纠纷吧 :-) </p>
+
+<p>mqtt.lua</p>
+
+<pre><code>m_dis = {}
+MQTT_CLIENTID = "esp-blinkenlite"
+MQTT_HOST = "EMQTTD host"
+MQTT_PORT = 1883
+
+function animate(m, pl)
+    m:publish("/mcu/status", "--&gt; ANIMATE COMMAND", 0, 0,
+        function(m) print("ANIMATE COMMAND") end)
+
+    if pl == "0" then
+        m:publish("/mcu/status", "--&gt; LED OFF", 0, 0,
+            function(m) print("LED OFF") end)
+        tmr.stop(1)
+
+    elseif pl == "1" then
+        m:publish("/mcu/status", "--&gt; R-G-B Mode", 0, 0,
+            function(m) print("RGB Mode") end)
+        tmr.stop(1)
+    
+    elseif pl == "2" then
+        m:publish("/mcu/status", "--&gt; Random-Breathe Mode", 0, 0,
+            function(m) print("Random-Breathe Mode") end)    
+        tmr.stop(1)
+    
+    elseif pl == "3" then
+        m:publish("/mcu/status", "--&gt; Disco Mode", 0, 0,
+            function(m) print("Disco Mode") end) 
+        tmr.stop(1)
+    
+    else
+        m:publish("/mcu/status", "--&gt; Error: Unknown Command", 0, 0,
+            function(m) print("ERROR: UNKNOWN COMMAND") end)
+    end
+end
+
+
+m_dis["/mcu/cmd/animate"] = animate
+
+m = mqtt.Client(MQTT_CLIENTID, 60, "", "") -- Living dangerously. No password!
+
+m:on("connect", function(m) 
+        print ("\n\n", MQTT_CLIENTID, " connected to MQTT host ", MQTT_HOST,
+        " on port ", MQTT_PORT, "\n\n")
+        m:subscribe("/mcu/cmd/#", 0,
+        function(m) print("Subscribed to CMD Topic") end)
+    end)
+
+
+m:on("offline", function(m)
+        print ("\n\nDisconnected from broker")
+        print("Heap: ", node.heap())
+    end)
+
+
+m:on("message", function(m,t,pl)
+    print("PAYLOAD: ", pl)
+    print("TOPIC: ", t)
+
+    if pl~=nil and m_dis[t] then
+        m_dis[t](m,pl)
+    end
+end)
+
+m:connect(MQTT_HOST, MQTT_PORT, 0, 1)
+</code></pre>
+
+<p>init.lua</p>
+
+<pre><code>wifi.setmode(wifi.STATION)
+wifi.sta.config("Baidu2728","12345678")
+ip, nm, gw = wifi.sta.getip()
+
+local wifi_counter = 0
+
+tmr.alarm(0, 1000, 1, function()
+    if wifi.sta.getip() == nil then
+        print("Connecting to AP...\n")
+
+        -- Rotate through RGB colors while waiting
+        wifi_counter = wifi_counter + 1;
+    else
+        ip, nm, gw = wifi.sta.getip()
+
+        -- Debug info
+        print("\n\nIP Info: \nIP Address: ",ip)
+        print("Netmask: ",nm)
+        print("Gateway Addr: ",gw,'\n')
+
+        tmr.stop(0)     -- Stop the polling loop
+
+        -- Continue to main function after network connection
+        dofile("mqtt.lua")
+    end
+end)
+</code></pre>
+
+<p>使用luatool工具将代码写入，并执行</p>
+
+<pre><code>$sudo luatool -f mqtt.lua -t mqtt.lua -vr
+$sudo luatool -f init.lua -d -vr
+</code></pre>
+
+<p>这时候，就会等 /mcu/cmd/animate 这个topic的消息，</p>
+
+<pre><code>publish.single("/mcu/cmd/animate", "1", hostname="EMQTTD host")
+</code></pre>
+
+<p>nodemcu收到消息后，会向/mcu/status 发布消息，如果订阅这个topic，就可以收到模拟的状态信息。</p>
+
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2015/11/12/mqtt的使用" data-title="Mqtt的使用" data-url="http://jgj1986.github.io/2015/11/12/mqtt%E7%9A%84%E4%BD%BF%E7%94%A8.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

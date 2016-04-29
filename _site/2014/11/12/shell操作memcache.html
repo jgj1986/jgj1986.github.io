@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Shell操作memcache | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Shell操作memcache</div>
+        <div class="date">date: 2014-11-12</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#shellmemcache">Shell操作memcache</a>    <ul>
+      <li><a href="#use-printf">use printf</a></li>
+      <li><a href="#use-echo">use echo</a></li>
+      <li><a href="#rn">/r和/n有和不同</a></li>
+      <li><a href="#nc">nc命令</a></li>
+      <li><a href="#section">关于博客</a></li>
+    </ul>
+  </li>
+  <li><a href="#memcachekey">查看memcache中的key</a></li>
+</ul>
+
+<p>本文是memcache的一些基本操作，以及引申出来一些小观点。</p>
+
+<h2 id="shellmemcache">Shell操作memcache</h2>
+
+<h3 id="use-printf">use printf</h3>
+
+<p>张宴的博客  <a href="http://zyan.cc/post/384/" target="_blank">利用shell命令操作Memcached</a>给出几个例子，如</p>
+
+<pre><code>$ printf "set jgj 0 0 3\r\n123\r\n" | nc 192.168.1.135 11211
+STORED
+$ printf "get jgj\r\n" | nc 192.168.1.135 11211
+VALUE jgj 0 3
+123
+END
+$ printf "delete jgj\r\n" | nc 192.168.1.135 11211
+DELETED
+</code></pre>
+
+<h3 id="use-echo">use echo</h3>
+
+<p>既然<code>printf</code>可以操作，<code>echo</code> 应该也是可以操作，经过一些测试，得到</p>
+
+<pre><code>$ echo -e "set jgj 0 0 3\n123\r" | nc 192.168.1.135 11211
+STORED
+$ echo "get jgj" |nc  192.168.1.135 11211
+VALUE jgj 0 3
+123
+END
+$ echo "delete jgj" | nc 192.168.1.135 11211
+DELETED
+</code></pre>
+
+<p>基于此，就可以类推memcache的其他命令的使用了。</p>
+
+<h3 id="rn">/r和/n有和不同</h3>
+
+<p>上面使用echo的操作时，如果使用命令</p>
+
+<pre><code>$ echo -e "set jgj 0 0 3\r\n123\r\n" | nc 192.168.1.135 11211
+STORED
+ERROR
+</code></pre>
+
+<p>虽然也执行成功，但是有个错误。所以\r和\n有什么不同呢？觉得 “回车(CR)与换行(LF)， ‘\r’和’\n’的区别” 这篇博客说的比较清楚（网上互相转来转去，也不知道是谁原创了）。其中的几个关键点<br />
+1. 回车CR-将光标移动到当前行的开头；换行LF-将光标“垂直”移动到下一行。（而并不移动到下一行的开头，即不改变光标水平位置）<br />
+2. CR用符号’\r’表示, 十进制ASCII代码是13, 十六进制代码为0x0D；LF使用’\n’符号表示, ASCII代码是10, 十六制为0x0A <br />
+3. Dos和windows采用回车+换行CR/LF表示下一行；而UNIX/Linux采用换行符LF表示下一行；苹果机(MAC OS系统)则采用回车符CR表示下一行<br />
+4. 有兴趣的可以看看这两个符号的来源(电传打字机时代开始的)</p>
+
+<h3 id="nc">nc命令</h3>
+
+<p>如其名字所表示的，牛叉的意思，网络界的“瑞士军刀”。<br />
+<strong>打开特定端口</strong></p>
+
+<pre><code>nc -l 81   ## 之后进入等待状态，1234是本机（192.168.1.130）未使用的一个端口
+telent 192.168.1.130 81 ##使用telent通过81端口登录，此时输入的数据，在上面的终端同样会输出
+</code></pre>
+
+<p><strong>文件传输</strong>   </p>
+
+<pre><code>nc -l 1234 &gt; received_file          # 1234是本机（192.168.1.130）未使用的一个端口
+nc 192.168.1.130 1234 &lt; test_file  # 在要传输的机器上执行
+</code></pre>
+
+<p>执行完之后，received_file中拥有和test_file同样的内容，上面的操作可以使用命令：  </p>
+
+<pre><code>ssh work@192.168.1.130 “( nc -l 1234 &gt; received_file 2&gt;/dev/null &amp; )” &amp;&amp; cat test_file | nc 192.168.1.130 1234
+</code></pre>
+
+<p><strong>扫描端口</strong>   </p>
+
+<pre><code>nc -v -z 192.168.1.130 70-90
+</code></pre>
+
+<p>想到了之前常用的扫面端口和机器的命令，nmap  </p>
+
+<pre><code>nmap 192.168.1.130
+nmap -sP 192.168.1.1/24
+</code></pre>
+
+<p>更多功能，期待挖掘！</p>
+
+<h3 id="section">关于博客</h3>
+
+<p>搜一些linux命令的时候，经常在一遍显示其他人还搜索 “张宴”，今天看到他的博客才注意起来。85年的，竟有如此不菲的成就。应该也是平时的一点一滴积累下来的。</p>
+
+<h2 id="memcachekey">查看memcache中的key</h2>
+
+<p>想查看memcache中都已经有了些什么样的key，类似于redis那样keys *，参考 <a href="http://www.darkcoding.net/software/memcached-list-all-keys/" target="_blank">Memcached: List all keys</a></p>
+
+<pre><code>$ telnet 192.168.1.135 11211
+Connected to 192.168.1.135.
+
+stats items
+
+STAT items:1:number 4
+...
+STAT items:4:number 1
+...
+END
+
+stats cachedump 1 0  ## 前面的1是items的标号，0，是要查询的item格式，当为0时，表示查询全部
+ITEM jgj [3 b; 1415763334 s]
+ITEM jin [3 b; 1415763334 s]
+ITEM key1 [3 b; 1415763334 s]
+END
+
+stats cachedump 4 0
+ITEM 127.0.0.1 [88 b; 1415763334 s]
+END
+</code></pre>
+
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2014/11/12/shell操作memcache" data-title="Shell操作memcache" data-url="http://jgj1986.github.io/2014/11/12/shell%E6%93%8D%E4%BD%9Cmemcache.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>

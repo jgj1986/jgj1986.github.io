@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="author" content="jgj" />
+        <meta name="viewport" content="width=device-width" /> 
+        <title>Go语言知识点 | 我是疯子</title>
+        
+        <meta name="keywords" content="" />
+        
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- bootstrap source -->
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="/asset/css/kissdata.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <link href="/feed.html" rel="alternate" title="jgj" type="application/atom+xml" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+
+        <style type="text/css">
+            body {
+                padding-top: 55px;
+                padding-bottom: 30px;
+                background-color: #EEE;
+            }
+        </style>
+
+        <link rel="stylesheet" href="/asset/js/google-code-prettify/prettify.css">
+        <script src="/asset/js/google-code-prettify/prettify.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // go to top
+                var bt = $('#toolBackTop'); var sw = $(document.body)[0].clientWidth; var limitsw = (sw - 840) / 2 - 80; if (limitsw > 0){ limitsw = parseInt(limitsw); bt.css("right",limitsw); } $(window).scroll(function() { var st = $(window).scrollTop(); if(st > 30){ bt.show(); }else{ bt.hide(); } });
+
+                // google-code-prettify
+                $("pre").addClass("prettyprint linenums"); prettyPrint();
+
+            })
+        </script>
+
+        <!-- kp747 
+        
+        -->
+    </head>
+    <body>
+            <div id="header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand normal-a" href="javascript:void(0)" onclick="javascript:void(0)">
+                    <span id="site_name">我是疯子</span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/categories.html">分类</a></li>
+                    <li><a href="/guestbook.html">留言</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                    <li><a href="/feed.html">RSS</a></li>
+                    <li><a href="javascript:void(0)" class="normal-a" onclick="javascript:void(0)"><span id="site_description">在此停留片刻，偶有所得！</span></a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9" id="main-left">
+                        <div class="page">
+    <div class="head">
+        <div class="title">Go语言知识点</div>
+        <div class="date">date: 2014-12-23</div>
+    </div>
+    <hr class="middle-margin" />
+
+
+    <!-- google adsense -->
+    <!--
+    <div>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:inline-block;width:728px;height:90px"
+            data-ad-client="ca-pub-1339945837472110"
+            data-ad-slot="9657522081"></ins>
+        <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
+    </div>
+    <hr class="middle-margin" />
+    -->
+
+    <div class="content">
+        <ul id="markdown-toc">
+  <li><a href="#section">时间格式化</a></li>
+  <li><a href="#vimgo">vim中go语法高亮显示</a></li>
+  <li><a href="#json">json解析问题</a></li>
+</ul>
+
+<h3 id="section">时间格式化</h3>
+
+<p>go语言提供的时间接口还是很丰富的，但是对显示时间格式化操作时，必须用 <code>2006-01-02 15:04:05</code>，这让人比较纠结</p>
+
+<pre><code>fmt.Println(timeNow.Format("2006-01-02T15:04:05.999Z+08:00"))
+fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+</code></pre>
+
+<p><a href="http://golang.org/pkg/time/" target="_blank">golang文档</a>中描述，如</p>
+
+<pre><code>Mon Jan 2 15:04:05 MST 2006
+01/02 03:04:05PM 06 -0700
+</code></pre>
+
+<p>想起了 庄晓立(Liigo)的<a href="http://blog.csdn.net/liigo/article/details/23699459" target="_blank">我为什么放弃Go语言</a>，确实还是有比较多的限制。</p>
+
+<p>在使用时间做转换的时候，都会遇到时区的问题，比如</p>
+
+<pre><code>the_time, _ := time.Parse("2006-01-02T15:04:05", "2015-06-16T15:19:41")
+fmt.Println("%d", the_time.Unix())
+</code></pre>
+
+<p>返回结果为 <code>1434467981</code>，将这个结果转为对应的年月日时分秒 </p>
+
+<pre><code>$ date -d "@1434467981"
+Tue Jun 16 23:19:41 CST 2015
+</code></pre>
+
+<p>多了八个小时，这就是时区带来的问题。可在解析的时候指定时区，如下：</p>
+
+<pre><code>loc, _ := time.LoadLocation("Local")
+// loc, _ := time.LoadLocation("Asia/Shanghai")
+the_time, _ := time.ParseInLocation("2006-01-02T15:04:05", "2015-06-16T15:19:41",loc)
+fmt.Println("%d", the_time.Unix())
+</code></pre>
+
+<p>这个时候的返回结果为 <code>1434439181</code>，就合适了。注意，这儿使用的是函数 <code>ParseInLocation</code>。</p>
+
+<h3 id="vimgo">vim中go语法高亮显示</h3>
+
+<p>参考 <a href="http://www.tuicool.com/articles/nmqaMbq" target="_blank">vim中go的语法高亮设置</a>。过程如下</p>
+
+<pre><code>sudo cp -r $GOROOT/misc/vim/indent/* /usr/share/vim/vimcurrent/indent
+sudo cp -r $GOROOT/misc/vim/syntax/* /usr/share/vim/vimcurrent/syntax
+sudo cp -r $GOROOT/misc/vim/compiler/* /usr/share/vim/vimcurrent/compiler
+sudo cp -r $GOROOT/misc/vim/ftplugin/* /usr/share/vim/vimcurrent/ftplugin
+sudo cp -r $GOROOT/misc/vim/ftdetect /usr/share/vim/vimcurrent/
+</code></pre>
+
+<p>in some case, vimrc should set the filetype</p>
+
+<pre><code>au BufRead,BufNewFile *.go set filetype=go
+</code></pre>
+
+<h3 id="json">json解析问题</h3>
+
+<p>如下的场景应该是比较熟悉的json解析方式</p>
+
+<pre><code>type Book struct {
+    Title   string
+    Author  string
+}
+b := [] byte('{"Title": "go", "Author": "jgj"}')
+var book Book
+err := json.Unmarshal(b, &amp;book)
+</code></pre>
+
+<p>这样就将json中的内容填充到了额book变量中，期间的匹配解析过程就不多介绍。有个问题，如果字符串中的key是 “_title” 或者 “1” ，那如果处理呢。<br />
+要知道，go中要使用大写才是public的，这种情况下，可以如下表示</p>
+
+<pre><code>    type Book struct {
+    Title   string `json:"_title"`
+    Author  string
+}
+</code></pre>
+
+<p>即使用<code>json:"xxx"</code>的方式指定匹配那个key，这种方式可以使用与各种情况。       </p>
+
+    </div>
+</div>
+
+
+
+    
+        <div class="comment">
+    
+    <!-- duoshuo -->
+    
+    <div class="ds-thread" data-thread-key="/2014/12/23/go语言知识点" data-title="Go语言知识点" data-url="http://jgj1986.github.io/2014/12/23/go%E8%AF%AD%E8%A8%80%E7%9F%A5%E8%AF%86%E7%82%B9.html"></div>
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blog-woshifengzi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.unstable.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    
+
+    
+    <!-- disqus -->
+    
+    
+    
+</div>
+
+    
+
+
+
+                    </div>
+                    <div class="col-md-3" id="main-right">
+                        <div>
+    <h4><strong>文章分类</strong></h4>
+    <hr class="small-margin colored-hr" />
+    <ul class="side-cat-ul">
+        
+        <li><a href="/categories.html#cat-生活随记" title="生活随记">生活随记 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-bigdata" title="bigdata">bigdata (9)</a></li>
+        
+        <li><a href="/categories.html#cat-web" title="web">web (9)</a></li>
+        
+        <li><a href="/categories.html#cat-database" title="database">database (3)</a></li>
+        
+        <li><a href="/categories.html#cat-linux" title="linux">linux (10)</a></li>
+        
+        <li><a href="/categories.html#cat-go" title="go">go (8)</a></li>
+        
+        <li><a href="/categories.html#cat-运维" title="运维">运维 (3)</a></li>
+        
+        <li><a href="/categories.html#cat-language" title="language">language (7)</a></li>
+        
+        <li><a href="/categories.html#cat-tools" title="tools">tools (1)</a></li>
+        
+        <li><a href="/categories.html#cat-iot" title="iot">iot (5)</a></li>
+        
+    </ul>
+</div>
+
+<hr class="small-margin colored-hr" />
+
+<!-- google adsense -->
+<!--
+<div>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:inline-block;width:300px;height:600px"
+        data-ad-client="ca-pub-1339945837472110"
+        data-ad-slot="8220828081"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+-->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="colored-hr" />
+
+                <p class="text-center">
+                Copyright 2014 - 2016 | Gen time&#58; 2016-04-12 01:51:47 CST
+
+                <!-- cnzz -->
+                
+
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none;" class="back-to" id="toolBackTop">
+        <a title="返回顶部" onclick="window.scrollTo(0,0);return false;" href="#top" class="back-top">返回顶部</a>
+    </div>
+
+    <!-- google analytics -->
+    
+
+
+</div>
+
+    </body>
+</html>
