@@ -1,6 +1,7 @@
 ---
 title:  Hadoop-Namenode
 date: 2016-03-04 17:12:28 +0800
+category: tools
 tags: tools
 - a
 - b
